@@ -1,0 +1,227 @@
+<script setup>
+import { ref, reactive } from 'vue';
+
+const isLogin = ref(true);
+const loginForm = reactive({
+    username: '',
+    password: '',
+});
+const registerForm = reactive({
+    username: '',
+    email: '',
+    password: '',
+});
+
+// 登录和注册的逻辑保持不变
+const handleLogin = () => {
+    console.log('尝试登录:', loginForm);
+    // 实际项目中，这里会调用API
+    alert(`登录成功！用户：${loginForm.username}`);
+};
+
+const handleRegister = () => {
+    console.log('尝试注册:', registerForm);
+    // 实际项目中，这里会调用API
+    alert(`注册成功！用户：${registerForm.username}`);
+};
+</script>
+
+<template>
+    <div class="login-register-container">
+        <div class="background-animation"></div>
+        <div class="form-box">
+            <transition name="form-fade" mode="out-in">
+                <div v-if="isLogin" key="login" class="form-content">
+                    <h2>欢迎回来</h2>
+                    <form @submit.prevent="handleLogin">
+                        <div class="input-group">
+                            <input type="text" v-model="loginForm.username" required>
+                            <label>用户名 / 邮箱</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="password" v-model="loginForm.password" required>
+                            <label>密码</label>
+                        </div>
+                        <button type="submit">登 录</button>
+                    </form>
+                    <p class="switch-form">
+                        还没有账户？<span @click="isLogin = false">立即注册</span>
+                    </p>
+                </div>
+
+                <!-- 注册表单 -->
+                <div v-else key="register" class="form-content">
+                    <h2>创建新账户</h2>
+                    <form @submit.prevent="handleRegister">
+                        <div class="input-group">
+                            <input type="text" v-model="registerForm.username" required>
+                            <label>用户名</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="email" v-model="registerForm.email" required>
+                            <label>邮箱地址</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="password" v-model="registerForm.password" required>
+                            <label>设置密码</label>
+                        </div>
+                        <button type="submit">注 册</button>
+                    </form>
+                    <p class="switch-form">
+                        已有账户？<span @click="isLogin = true">返回登录</span>
+                    </p>
+                </div>
+            </transition>
+        </div>
+    </div>
+</template>
+
+<style scoped>
+/* 🎨 优化点 1: 使用 CSS 变量统一管理颜色，打造柔和色盘 */
+.login-register-container {
+    /* 之前: #fbc2eb (亮粉), #a6c1ee (亮蓝) */
+    /* 现在: 使用更柔和、饱和度更低的颜色 */
+    --soft-pink: #e8c2ca; /* 柔和的豆沙粉 */
+    --soft-blue: #b2c7e3; /* 温和的雾霾蓝 */
+    --accent-pink: #d89aab; /* 用于强调的稍深粉色 */
+    --text-dark: #3a4b60; /* 深邃但不过于锐利的深蓝灰色 */
+    --text-light: #6e7d8d; /* 温和的浅灰蓝色 */
+
+    /* 玻璃拟态效果的微调 */
+    --glass-bg: rgba(255, 255, 255, 0.25); /* 稍微增加不透明度，提升内容可读性 */
+    --glass-border: rgba(255, 255, 255, 0.4);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+/* 🎨 优化点 2: 背景动画使用新的柔和色盘 */
+.background-animation {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    /* 应用新的渐变色 */
+    background: linear-gradient(45deg, var(--soft-pink), var(--soft-blue), var(--soft-pink), var(--soft-blue));
+    background-size: 400% 400%;
+    animation: gradient-move 20s ease infinite; /* 动画时间稍长，更舒缓 */
+}
+
+@keyframes gradient-move {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 🎨 优化点 3: 玻璃拟态质感提升 */
+.form-box {
+    width: 400px;
+    padding: 40px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px); /* 模糊效果更强一点 */
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2); /* 阴影更柔和 */
+    text-align: center;
+}
+
+.form-content h2 {
+    margin-bottom: 30px;
+    font-weight: 300;
+    font-size: 28px;
+    color: var(--text-dark); /* 应用新的深色文本颜色 */
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 35px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 16px;
+    color: var(--text-dark);
+    border: none;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.15); /* 底部边框颜色更淡 */
+    outline: none;
+    background: transparent;
+}
+
+.input-group label {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    padding: 0;
+    font-size: 16px;
+    color: var(--text-light); /* 应用新的浅色文本颜色 */
+    pointer-events: none;
+    transition: .5s;
+}
+
+/* 🎨 优化点 4: 交互颜色同步更新 */
+.input-group input:focus~label,
+.input-group input:valid~label {
+    top: -20px;
+    left: 0;
+    color: var(--soft-blue); /* 聚焦时标签颜色变为柔和蓝 */
+    font-size: 12px;
+}
+
+.input-group input:focus {
+    border-bottom-color: var(--soft-blue); /* 聚焦时下划线颜色 */
+}
+
+button {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(90deg, var(--accent-pink), var(--soft-blue)); /* 按钮使用新的渐变色 */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* 按钮阴影更淡 */
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(178, 199, 227, 0.4); /* 悬停时阴影颜色与主题匹配 */
+}
+
+.switch-form {
+    margin-top: 25px;
+    font-size: 14px;
+    color: var(--text-light);
+}
+
+.switch-form span {
+    color: var(--accent-pink);
+    cursor: pointer;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.switch-form span:hover {
+    text-decoration: underline;
+    color: var(--soft-blue);
+}
+
+.form-fade-enter-active,
+.form-fade-leave-active {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.form-fade-enter-from,
+.form-fade-leave-to {
+    opacity: 0;
+    transform: translateY(20px);
+}
+</style>
