@@ -12,7 +12,6 @@ const registerForm = reactive({
     password: '',
 });
 
-// 登录和注册的逻辑保持不变
 const handleLogin = () => {
     console.log('尝试登录:', loginForm);
     // 实际项目中，这里会调用API
@@ -49,7 +48,6 @@ const handleRegister = () => {
                     </p>
                 </div>
 
-                <!-- 注册表单 -->
                 <div v-else key="register" class="form-content">
                     <h2>创建新账户</h2>
                     <form @submit.prevent="handleRegister">
@@ -77,18 +75,13 @@ const handleRegister = () => {
 </template>
 
 <style scoped>
-/* 🎨 优化点 1: 使用 CSS 变量统一管理颜色，打造柔和色盘 */
 .login-register-container {
-    /* 之前: #fbc2eb (亮粉), #a6c1ee (亮蓝) */
-    /* 现在: 使用更柔和、饱和度更低的颜色 */
-    --soft-pink: #e8c2ca; /* 柔和的豆沙粉 */
-    --soft-blue: #b2c7e3; /* 温和的雾霾蓝 */
-    --accent-pink: #d89aab; /* 用于强调的稍深粉色 */
-    --text-dark: #3a4b60; /* 深邃但不过于锐利的深蓝灰色 */
-    --text-light: #6e7d8d; /* 温和的浅灰蓝色 */
-
-    /* 玻璃拟态效果的微调 */
-    --glass-bg: rgba(255, 255, 255, 0.25); /* 稍微增加不透明度，提升内容可读性 */
+    --soft-pink: #e8c2ca; 
+    --soft-blue: #b2c7e3;
+    --accent-pink: #d89aab;
+    --text-dark: #3a4b60;
+    --text-light: #6e7d8d;
+    --glass-bg: rgba(255, 255, 255, 0.25); 
     --glass-border: rgba(255, 255, 255, 0.4);
 
     display: flex;
@@ -99,7 +92,6 @@ const handleRegister = () => {
     position: relative;
 }
 
-/* 🎨 优化点 2: 背景动画使用新的柔和色盘 */
 .background-animation {
     position: absolute;
     top: -50%;
