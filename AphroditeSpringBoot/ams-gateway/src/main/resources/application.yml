@@ -1,0 +1,14 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ams-gateway
+  
+  cloud:
+    gateway:
+      routes:
+        - id: ams_login_api # 给这个规则起一个唯一的名字
+          uri: http://localhost:8081 
+          predicates:
+            - Path=/api/auth/** 
