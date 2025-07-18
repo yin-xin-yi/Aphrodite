@@ -1,26 +1,41 @@
 version: '3.8'
 
 services:
-  # --- 前端服务 ---
-  frontend:
-    build:
-      context: ./AphroditeVue  # Dockerfile 所在目录
-    container_name: aphrodite_vue_frontend
-    ports:
-      - "80:80"  # 将宿主机的 80 端口映射到容器的 80 端口
+  db:
+    image: postgres:15-alpine
+    container_name: aphrodite_postgres_db
+    restart: always # 确保容器总是在运行状态
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - aphrodite-postgres-data:/var/lib/postgresql/data
     networks:
       - aphrodite-net
+
+  frontend:
+    build:
+      context: ./AphroditeVue
+    container_name: aphrodite_vue_frontend
+    ports:
+      - "8888:80"
+    networks:
+      - aphrodite-net
+    depends_on:
+      - gateway
 
   gateway:
     build:
       context: ./AphroditeSpringBoot/ams-gateway
     container_name: aphrodite_gateway
     ports:
-      - "8080:8080" 
+      - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
-      - login 
+      - login
+      - db
     networks:
       - aphrodite-net
 
@@ -28,14 +43,22 @@ services:
     build:
       context: ./AphroditeSpringBoot/ams-login
     container_name: aphrodite_login_service
-    # 注意：这里没有 ports 映射！它不需要暴露给外部，只通过网关访问
+    restart: always
     environment:
-      SERVER_PORT: 8081 # 也可以通过环境变量覆盖端口
+      SERVER_PORT: 8081
       SPRING_PROFILES_ACTIVE: docker
+      # 注入数据库连接信息
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      - db 
     networks:
       - aphrodite-net
-
 
 networks:
   aphrodite-net:
     driver: bridge
+
+volumes:
+  aphrodite-postgres-data:
