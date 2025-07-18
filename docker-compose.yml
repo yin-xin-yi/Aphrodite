@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # --- 前端服务 ---
+  frontend:
+    build:
+      context: ./AphroditeVue  # Dockerfile 所在目录
+    container_name: aphrodite_vue_frontend
+    ports:
+      - "80:80"  # 将宿主机的 80 端口映射到容器的 80 端口
+    networks:
+      - aphrodite-net
+
+  gateway:
+    build:
+      context: ./AphroditeSpringBoot/ams-gateway
+    container_name: aphrodite_gateway
+    ports:
+      - "8080:8080" 
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - login 
+    networks:
+      - aphrodite-net
+
+  login:
+    build:
+      context: ./AphroditeSpringBoot/ams-login
+    container_name: aphrodite_login_service
+    # 注意：这里没有 ports 映射！它不需要暴露给外部，只通过网关访问
+    environment:
+      SERVER_PORT: 8081 # 也可以通过环境变量覆盖端口
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - aphrodite-net
+
+
+networks:
+  aphrodite-net:
+    driver: bridge
