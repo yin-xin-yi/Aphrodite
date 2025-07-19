@@ -1,11 +1,11 @@
-package com.example.amslogin.dto;
+package com.example.amsregister.dto;
 
-public class LoginResponse {
+public class RegisterResponse {
 
     private boolean success;
     private String message;
 
-    public LoginResponse(boolean success, String message) {
+    public RegisterResponse(boolean success, String message) {
         this.success = success; // boolen
         this.message = message; // 字符串
     }
