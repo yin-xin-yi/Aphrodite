@@ -2,16 +2,20 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
-    path: '/',
+    path: '/RegisterAndLogin',
     name: 'RegisterAndLogin',
     component:() => import('../views/RegisterAndLogin.vue')
   },
-  // {
-  //   path: '/', 
-  //   name: 'Home',
-  //   component: () => import('../views/Home.vue'),
-  //   meta: { title: '首页 - 我的贴吧' }
-  // },
+  {
+    path: '/Home',
+    name: 'Home',
+    component:() => import('../views/Home.vue')
+  },
+  {
+    path: '/', 
+    name: 'Index',
+    component: () => import('../views/Index.vue'),
+  },
 
 ]
 const router = createRouter({

@@ -6,8 +6,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class AmsLoginApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    // @Autowired auresource
+    // PasswordService ps;
+
+    @Test
+    void contextLoads() {
+		
+    }
 
 }

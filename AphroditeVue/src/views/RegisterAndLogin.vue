@@ -1,27 +1,66 @@
 <script setup>
 import { ref, reactive } from 'vue';
+import service from '../utils/service';
 
-const isLogin = ref(true);
-const loginForm = reactive({
+const API_PATH = {
+    "LOGIN_PATH": "/auth/login",
+    "REGISTER_PATH": "/auth/register"
+}
+const islogin = ref(true);
+const LoginForm = reactive({
     username: '',
     password: '',
 });
-const registerForm = reactive({
+const RegisterForm = reactive({
     username: '',
     email: '',
     password: '',
 });
 
-const handleLogin = () => {
-    console.log('尝试登录:', loginForm);
-    // 实际项目中，这里会调用API
-    alert(`登录成功！用户：${loginForm.username}`);
+const HandleLogin = async () => {
+    if (!LoginForm.username || !LoginForm.password) {
+        alert('请输入用户名和密码！');
+        return;
+    }
+
+    console.log('尝试登录:', LoginForm);
+
+    try{
+        const response = await service.post(API_PATH.LOGIN_PATH, {
+            username: LoginForm.username,
+            password: LoginForm.password
+        });
+        console.log('登录成功，后端返回:', response);
+    }
+    catch{
+        console.error('登录请求失败:', error);
+        // 密码 清空？ 就不清空了 感觉还更不好用
+    }
 };
 
-const handleRegister = () => {
-    console.log('尝试注册:', registerForm);
-    // 实际项目中，这里会调用API
-    alert(`注册成功！用户：${registerForm.username}`);
+const HandleRegister = async () => {
+     if (!RegisterForm.username || !RegisterForm.email || !RegisterForm.password) {
+        alert('请填写所有注册信息！');
+        return;
+    }
+    console.log('尝试注册:', RegisterForm);
+
+    try{
+        const response = await service.post(API_PATH.REGISTER_PATH, {
+            username: RegisterForm.username,
+            email: RegisterForm.email,
+            password: RegisterForm.password
+        });
+        console.log('注册成功，后端返回:', response);
+        alert(response.message || '注册成功！可以去登录');
+        islogin.value = true;
+        // Object.assign 把后面的属性 复制到 对象上面去
+        // 可以记一下这个用法
+        Object.assign(RegisterForm, { username: '', email: '', password: '' });
+    }
+    catch{
+        console.error('注册请求失败:', error);
+    }
 };
 </script>
 
@@ -30,43 +69,45 @@ const handleRegister = () => {
         <div class="background-animation"></div>
         <div class="form-box">
             <transition name="form-fade" mode="out-in">
-                <div v-if="isLogin" key="login" class="form-content">
+                <div v-if="islogin" key="login" class="form-content">
                     <h2>欢迎回来</h2>
-                    <form @submit.prevent="handleLogin">
+                    <form @submit.prevent="HandleLogin">
                         <div class="input-group">
-                            <input type="text" v-model="loginForm.username" required>
+                            <input type="text" v-model="LoginForm.username" required>
                             <label>用户名 / 邮箱</label>
                         </div>
                         <div class="input-group">
-                            <input type="password" v-model="loginForm.password" required>
+                            <input type="password" v-model="LoginForm.password" required>
                             <label>密码</label>
                         </div>
                         <button type="submit">登 录</button>
                     </form>
                     <p class="switch-form">
-                        还没有账户？<span @click="isLogin = false">立即注册</span>
+                        还没有账户？<span @click="islogin = false">立即注册</span>
                     </p>
                 </div>
 
+
+
                 <div v-else key="register" class="form-content">
                     <h2>创建新账户</h2>
-                    <form @submit.prevent="handleRegister">
+                    <form @submit.prevent="HandleRegister">
                         <div class="input-group">
-                            <input type="text" v-model="registerForm.username" required>
+                            <input type="text" v-model="RegisterForm.username" required>
                             <label>用户名</label>
                         </div>
                         <div class="input-group">
-                            <input type="email" v-model="registerForm.email" required>
+                            <input type="email" v-model="RegisterForm.email" required>
                             <label>邮箱地址</label>
                         </div>
                         <div class="input-group">
-                            <input type="password" v-model="registerForm.password" required>
+                            <input type="password" v-model="RegisterForm.password" required>
                             <label>设置密码</label>
                         </div>
                         <button type="submit">注 册</button>
                     </form>
                     <p class="switch-form">
-                        已有账户？<span @click="isLogin = true">返回登录</span>
+                        已有账户？<span @click="islogin = true">返回登录</span>
                     </p>
                 </div>
             </transition>
@@ -76,12 +117,12 @@ const handleRegister = () => {
 
 <style scoped>
 .login-register-container {
-    --soft-pink: #e8c2ca; 
+    --soft-pink: #e8c2ca;
     --soft-blue: #b2c7e3;
     --accent-pink: #d89aab;
     --text-dark: #3a4b60;
     --text-light: #6e7d8d;
-    --glass-bg: rgba(255, 255, 255, 0.25); 
+    --glass-bg: rgba(255, 255, 255, 0.25);
     --glass-border: rgba(255, 255, 255, 0.4);
 
     display: flex;
@@ -101,13 +142,22 @@ const handleRegister = () => {
     /* 应用新的渐变色 */
     background: linear-gradient(45deg, var(--soft-pink), var(--soft-blue), var(--soft-pink), var(--soft-blue));
     background-size: 400% 400%;
-    animation: gradient-move 20s ease infinite; /* 动画时间稍长，更舒缓 */
+    animation: gradient-move 20s ease infinite;
+    /* 动画时间稍长，更舒缓 */
 }
 
 @keyframes gradient-move {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 /* 🎨 优化点 3: 玻璃拟态质感提升 */
@@ -115,10 +165,12 @@ const handleRegister = () => {
     width: 400px;
     padding: 40px;
     background: var(--glass-bg);
-    backdrop-filter: blur(12px); /* 模糊效果更强一点 */
+    backdrop-filter: blur(12px);
+    /* 模糊效果更强一点 */
     border: 1px solid var(--glass-border);
     border-radius: 20px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2); /* 阴影更柔和 */
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+    /* 阴影更柔和 */
     text-align: center;
 }
 
@@ -126,7 +178,8 @@ const handleRegister = () => {
     margin-bottom: 30px;
     font-weight: 300;
     font-size: 28px;
-    color: var(--text-dark); /* 应用新的深色文本颜色 */
+    color: var(--text-dark);
+    /* 应用新的深色文本颜色 */
 }
 
 .input-group {
@@ -140,7 +193,8 @@ const handleRegister = () => {
     font-size: 16px;
     color: var(--text-dark);
     border: none;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.15); /* 底部边框颜色更淡 */
+    border-bottom: 2px solid rgba(0, 0, 0, 0.15);
+    /* 底部边框颜色更淡 */
     outline: none;
     background: transparent;
 }
@@ -151,7 +205,8 @@ const handleRegister = () => {
     left: 0;
     padding: 0;
     font-size: 16px;
-    color: var(--text-light); /* 应用新的浅色文本颜色 */
+    color: var(--text-light);
+    /* 应用新的浅色文本颜色 */
     pointer-events: none;
     transition: .5s;
 }
@@ -161,12 +216,14 @@ const handleRegister = () => {
 .input-group input:valid~label {
     top: -20px;
     left: 0;
-    color: var(--soft-blue); /* 聚焦时标签颜色变为柔和蓝 */
+    color: var(--soft-blue);
+    /* 聚焦时标签颜色变为柔和蓝 */
     font-size: 12px;
 }
 
 .input-group input:focus {
-    border-bottom-color: var(--soft-blue); /* 聚焦时下划线颜色 */
+    border-bottom-color: var(--soft-blue);
+    /* 聚焦时下划线颜色 */
 }
 
 button {
@@ -175,17 +232,20 @@ button {
     font-size: 18px;
     font-weight: bold;
     color: white;
-    background: linear-gradient(90deg, var(--accent-pink), var(--soft-blue)); /* 按钮使用新的渐变色 */
+    background: linear-gradient(90deg, var(--accent-pink), var(--soft-blue));
+    /* 按钮使用新的渐变色 */
     border: none;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* 按钮阴影更淡 */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    /* 按钮阴影更淡 */
 }
 
 button:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(178, 199, 227, 0.4); /* 悬停时阴影颜色与主题匹配 */
+    box-shadow: 0 6px 20px rgba(178, 199, 227, 0.4);
+    /* 悬停时阴影颜色与主题匹配 */
 }
 
 .switch-form {
