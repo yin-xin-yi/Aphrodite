@@ -2,6 +2,8 @@ package com.example.amsregister.dto;
 
 public class RegisterRequest {
 
+    // 这个对应的是 前端的三个 请求
+    // 大小写是敏感的
     private String username;
     private String email;
     private String password;

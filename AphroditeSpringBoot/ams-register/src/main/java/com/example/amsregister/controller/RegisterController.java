@@ -27,27 +27,24 @@ public class RegisterController {
         this.passwordService = passwordService;
     }
 
-    // 
+    /**
+     * 1. RegisterRequest 这个是我们封装好的类 要和 前端的发来的请求保持一致 2.
+     */
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> addUser(@RequestBody RegisterRequest registerRequest) {
-
         if (userRepository.findByUsername(registerRequest.getUsername()).isPresent()) {
             return new ResponseEntity<>(new RegisterResponse(false, "用户名已被占用！"), HttpStatus.CONFLICT);
         }
-
         if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
             return new ResponseEntity<>(new RegisterResponse(false, "该邮箱已被注册！"), HttpStatus.CONFLICT);
         }
-
         Users user = new Users();
         user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());
-
+        user.setNickname(registerRequest.getUsername());
         String hashedPassword = passwordService.hashPassword(registerRequest.getPassword());
         user.setPasswordHash(hashedPassword);
         userRepository.save(user);
-
-        // <> 这个就 自动 推导类型 
         return new ResponseEntity<>(new RegisterResponse(true, "用户注册成功！"), HttpStatus.CREATED);
     }
 
