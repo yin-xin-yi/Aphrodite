@@ -13,6 +13,7 @@ import com.example.amsregister.dto.RegisterResponse;
 import com.example.amsregister.model.Users;
 import com.example.amsregister.repository.UserRepository;
 import com.example.amsregister.service.PasswordService;
+import com.example.amsregister.utils.TokenUtil;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -20,11 +21,13 @@ public class RegisterController {
 
     private final UserRepository userRepository;
     private final PasswordService passwordService;
+    private final TokenUtil tokenUtil;
 
     @Autowired
-    public RegisterController(UserRepository userRepository, PasswordService passwordService) {
+    public RegisterController(UserRepository userRepository, PasswordService passwordService, TokenUtil tokenUtil) {
         this.userRepository = userRepository;
         this.passwordService = passwordService;
+        this.tokenUtil = tokenUtil;
     }
 
     /**
@@ -38,6 +41,8 @@ public class RegisterController {
         if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
             return new ResponseEntity<>(new RegisterResponse(false, "该邮箱已被注册！"), HttpStatus.CONFLICT);
         }
+
+        // 存入 数据库
         Users user = new Users();
         user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());
@@ -45,7 +50,13 @@ public class RegisterController {
         String hashedPassword = passwordService.hashPassword(registerRequest.getPassword());
         user.setPasswordHash(hashedPassword);
         userRepository.save(user);
-        return new ResponseEntity<>(new RegisterResponse(true, "用户注册成功！"), HttpStatus.CREATED);
+
+        // 生成token
+        // 返回一个token 就可以
+        final String token = tokenUtil.generateToken(user.getUsername());
+        RegisterResponse response = new RegisterResponse(true, "用户注册成功！", token);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 }

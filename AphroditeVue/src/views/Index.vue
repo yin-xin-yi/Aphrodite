@@ -2,9 +2,8 @@
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-
 const GoToLogin = () => {
-    router.push('/RegisterAndLogin'); // 假设您的登录页路由是 /login
+    router.push('/RegisterAndLogin'); 
 };
 </script>
 

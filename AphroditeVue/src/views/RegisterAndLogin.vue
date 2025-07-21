@@ -1,12 +1,14 @@
 <script setup>
-import { ref, reactive } from 'vue';
-import service from '../utils/service';
+import { ref, reactive, onMounted } from 'vue';
+import { useRouter } from 'vue-router'; // 1. 引入 useRouter 用于跳转
+import { handleLogin, handleRegister } from '@/api/rl'; // 2. 引入改造后的 API 函数
+import { SetToken } from '@/utils/auth'; // 引入 SetToken
+import { FetchAllPosts } from '../api/post';
 
-const API_PATH = {
-    "LOGIN_PATH": "/auth/login",
-    "REGISTER_PATH": "/auth/register"
-}
+const router = useRouter(); // 获取 router 实例
+
 const islogin = ref(true);
+
 const LoginForm = reactive({
     username: '',
     password: '',
@@ -17,51 +19,48 @@ const RegisterForm = reactive({
     password: '',
 });
 
-const HandleLogin = async () => {
+// 3. 创建组件内部的提交方法 (服务员的核心工作)
+const SubmitLogin = async () => {
     if (!LoginForm.username || !LoginForm.password) {
         alert('请输入用户名和密码！');
         return;
     }
-
-    console.log('尝试登录:', LoginForm);
-
-    try{
-        const response = await service.post(API_PATH.LOGIN_PATH, {
-            username: LoginForm.username,
-            password: LoginForm.password
-        });
-        console.log('登录成功，后端返回:', response);
-    }
-    catch{
+    try {
+        const response = await handleLogin(LoginForm);
+        if (response && response.token) {
+            alert(response.message || '登录成功！');
+            SetToken(response.token);
+            router.push({ name: 'Home' });
+        } else {
+            alert(response.message || '登录失败，请检查用户名或密码！');
+        }
+    } catch (error) {
         console.error('登录请求失败:', error);
-        // 密码 清空？ 就不清空了 感觉还更不好用
+        alert('服务器开小差了，请稍后再试！');
     }
 };
 
-const HandleRegister = async () => {
-     if (!RegisterForm.username || !RegisterForm.email || !RegisterForm.password) {
+const SubmitRegister = async () => {
+    if (!RegisterForm.username || !RegisterForm.email || !RegisterForm.password) {
         alert('请填写所有注册信息！');
         return;
     }
-    console.log('尝试注册:', RegisterForm);
-
-    try{
-        const response = await service.post(API_PATH.REGISTER_PATH, {
-            username: RegisterForm.username,
-            email: RegisterForm.email,
-            password: RegisterForm.password
-        });
-        console.log('注册成功，后端返回:', response);
-        alert(response.message || '注册成功！可以去登录');
-        islogin.value = true;
-        // Object.assign 把后面的属性 复制到 对象上面去
-        // 可以记一下这个用法
-        Object.assign(RegisterForm, { username: '', email: '', password: '' });
-    }
-    catch{
+    try {
+        const response = await handleRegister(RegisterForm);
+        if (response && response.success) {
+            alert(response.message || '注册成功！现在可以登录了。');
+            // 注册成功后，清空表单并切换到登录页
+            islogin.value = true;
+            Object.assign(RegisterForm, { username: '', email: '', password: '' });
+        } else {
+            alert(response.message || '注册失败，请稍后再试！');
+        }
+    } catch (error) {
         console.error('注册请求失败:', error);
+        alert('服务器开小差了，请稍后再试！');
     }
 };
+
 </script>
 
 <template>
@@ -71,7 +70,7 @@ const HandleRegister = async () => {
             <transition name="form-fade" mode="out-in">
                 <div v-if="islogin" key="login" class="form-content">
                     <h2>欢迎回来</h2>
-                    <form @submit.prevent="HandleLogin">
+                    <form @submit.prevent="SubmitLogin">
                         <div class="input-group">
                             <input type="text" v-model="LoginForm.username" required>
                             <label>用户名 / 邮箱</label>
@@ -91,7 +90,7 @@ const HandleRegister = async () => {
 
                 <div v-else key="register" class="form-content">
                     <h2>创建新账户</h2>
-                    <form @submit.prevent="HandleRegister">
+                    <form @submit.prevent="SubmitRegister">
                         <div class="input-group">
                             <input type="text" v-model="RegisterForm.username" required>
                             <label>用户名</label>

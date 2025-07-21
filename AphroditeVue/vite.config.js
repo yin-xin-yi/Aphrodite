@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import path from 'path'
 
 export default defineConfig({
   plugins: [vue()],
@@ -10,6 +11,11 @@ export default defineConfig({
         changeOrigin: true, // 允许跨域
         rewrite: (path) => path.replace(/^\/api/, '')  // 前端请求 /api/users，实际代理到 http://localhost:8081/users
       }
+    }
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src')
     }
   }
 })

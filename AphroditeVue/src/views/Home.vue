@@ -1,6 +1,8 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
+import { FetchAllPosts } from '@api/post.js'
+import { GetUserName } from '@/utils/auth';
 
 // ------------------------------------------------------------------------------------------
 /**
@@ -10,10 +12,7 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const activeview = ref('home');
-const user = reactive({
-    name: 'Yxy',
-    avatar: 'Yxy'
-});
+const isloading = ref(true);
 // ------------------------------------------------------------------------------------------
 
 
@@ -23,7 +22,7 @@ const user = reactive({
  */
 
 //  帖子渲染
-const posts = reactive([
+const posts = ref([
     // 帖子 类似样式
     // {
     //     id: 1,
@@ -34,6 +33,16 @@ const posts = reactive([
     //     comments: 11
     // },
 ]);
+
+// 头像可以先写死
+// 之后替换
+const user = reactive({
+    name: GetUserName() || '游客',
+    avatar: 'https://api.multiavatar.com/Yxy.svg'
+});
+// ------------------------------------------------------------------------------------------
+
+
 
 // ------------------------------------------------------------------------------------------
 /**
@@ -54,6 +63,22 @@ const HandleLogout = () => {
     router.push('/RegisterAndLogin');
 };
 // ------------------------------------------------------------------------------------------
+
+onMounted(async () => {
+    try {
+        const response = await FetchAllPosts();
+        if (response && response.data) {
+            posts.value = response.data;
+        }
+    } catch (error) {
+        console.error("获取帖子失败:", error);
+        // 可以在这里给用户一些提示，比如一个错误消息
+    } finally {
+        // 无论成功还是失败，都结束加载状态
+        isloading.value = false;
+    }
+})
+
 
 </script>
 
