@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getToken, setToken, removeToken } from './token'; 
+import { GetToken, SetToken, RemoveToken } from './token'; 
 
 const service = axios.create({
   baseURL: '/api', 
@@ -13,7 +13,7 @@ const service = axios.create({
  */
 service.interceptors.request.use(
   config => {
-    const token = getToken();
+    const token = GetToken();
     
     if (token) {
       config.headers['Authorization'] = 'Bearer ' + token;
@@ -31,7 +31,7 @@ service.interceptors.response.use(
   response => {
     const res = response.data;
     if (res.code === 200 && res.data && res.data.token) {
-      setToken(res.data.token);
+      SetToken(res.data.token);
       console.log('Token 已自动存储!');
     }
     return res; // 注意这里直接是data
@@ -43,7 +43,7 @@ service.interceptors.response.use(
       const message = data.message || '网络请求失败，请稍后再试';
       if (status === 401) {
         alert('登录状态已过期，请重新登录');
-        removeToken();
+        RemoveToken();
       } else {
         alert(message);
       }

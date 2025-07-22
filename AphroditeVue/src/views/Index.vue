@@ -44,7 +44,7 @@ const GoToLogin = () => {
     --glass-border: rgba(255, 255, 255, 0.4);
 
     display: flex;
-    flex-direction: column; /* 垂直布局，为页脚留出空间 */
+    flex-direction: column; 
     justify-content: center;
     align-items: center;
     min-height: 100vh;

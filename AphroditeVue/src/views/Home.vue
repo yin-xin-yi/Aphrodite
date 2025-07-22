@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { FetchAllPosts } from '@api/post.js'
+import { FetchAllPosts } from '@/api/post.js'
 import { GetUserName } from '@/utils/auth';
 
 // ------------------------------------------------------------------------------------------
@@ -72,9 +72,10 @@ onMounted(async () => {
         }
     } catch (error) {
         console.error("获取帖子失败:", error);
-        // 可以在这里给用户一些提示，比如一个错误消息
+        alert("获取帖子失败")
+        // 
     } finally {
-        // 无论成功还是失败，都结束加载状态
+        // 无论成功还是失败
         isloading.value = false;
     }
 })

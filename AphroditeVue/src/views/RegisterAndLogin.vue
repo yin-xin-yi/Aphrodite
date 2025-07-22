@@ -1,9 +1,8 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router'; // 1. 引入 useRouter 用于跳转
-import { handleLogin, handleRegister } from '@/api/rl'; // 2. 引入改造后的 API 函数
+import { HandleLogin, HandleRegister } from '@/api/rl'; // 2. 引入改造后的 API 函数
 import { SetToken } from '@/utils/auth'; // 引入 SetToken
-import { FetchAllPosts } from '../api/post';
 
 const router = useRouter(); // 获取 router 实例
 
@@ -19,14 +18,13 @@ const RegisterForm = reactive({
     password: '',
 });
 
-// 3. 创建组件内部的提交方法 (服务员的核心工作)
 const SubmitLogin = async () => {
     if (!LoginForm.username || !LoginForm.password) {
         alert('请输入用户名和密码！');
         return;
     }
     try {
-        const response = await handleLogin(LoginForm);
+        const response = await HandleLogin(LoginForm);
         if (response && response.token) {
             alert(response.message || '登录成功！');
             SetToken(response.token);
@@ -46,7 +44,7 @@ const SubmitRegister = async () => {
         return;
     }
     try {
-        const response = await handleRegister(RegisterForm);
+        const response = await HandleRegister(RegisterForm);
         if (response && response.success) {
             alert(response.message || '注册成功！现在可以登录了。');
             // 注册成功后，清空表单并切换到登录页

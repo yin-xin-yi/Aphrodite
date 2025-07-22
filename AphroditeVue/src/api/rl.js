@@ -3,7 +3,7 @@ const API_PATH = {
     REGISTER_PATH: "/auth/register",
 };
 
-export const handleLogin = (logindata) => {
+export const HandleLogin = (logindata) => {
     return service.post(API_PATH.LOGIN_PATH, logindata);
 };
 

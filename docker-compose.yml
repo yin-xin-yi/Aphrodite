@@ -4,11 +4,8 @@ services:
   db:
     image: postgres:15-alpine
     container_name: aphrodite_postgres_db
-    restart: always # 确保容器总是在运行状态
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    restart: always
+    env_file: ./db.env
     volumes:
       - aphrodite-postgres-data:/var/lib/postgresql/data
     networks:
@@ -64,6 +61,22 @@ services:
     restart: always
     environment:
       SERVER_PORT: 8082
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      - db 
+    networks:
+      - aphrodite-net
+
+  fetchdata:
+    build:
+      context: ./AphroditeSpringBoot/ams-fetchdata
+    container_name: aphrodite_fetchdata_service
+    restart: always
+    environment:
+      SERVER_PORT: 8083
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
