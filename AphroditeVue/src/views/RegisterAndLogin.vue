@@ -1,13 +1,11 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
-import { useRouter } from 'vue-router'; // 1. 引入 useRouter 用于跳转
-import { HandleLogin, HandleRegister } from '@/api/rl'; // 2. 引入改造后的 API 函数
-import { SetToken } from '@/utils/auth'; // 引入 SetToken
+import { useRouter } from 'vue-router'; 
+import { HandleLogin, HandleRegister } from '@/api/rl';
+import { SetToken } from '@/utils/auth';
 
-const router = useRouter(); // 获取 router 实例
-
+const router = useRouter(); 
 const islogin = ref(true);
-
 const LoginForm = reactive({
     username: '',
     password: '',

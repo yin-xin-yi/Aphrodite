@@ -5,9 +5,16 @@ services:
     image: postgres:15-alpine
     container_name: aphrodite_postgres_db
     restart: always
-    env_file: ./db.env
+    environment:
+      
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports: 
+      - "5433:5432"
     volumes:
       - aphrodite-postgres-data:/var/lib/postgresql/data
+      - ./db.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - aphrodite-net
 
@@ -32,8 +39,8 @@ services:
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
       - login
-      - db
       - register
+      - fetchdata 
     networks:
       - aphrodite-net
 

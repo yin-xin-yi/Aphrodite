@@ -9,7 +9,6 @@ DROP TABLE IF EXISTS post_images;
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS users;
 
-
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -21,10 +20,6 @@ CREATE TABLE users (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()       -- 创建时间
 );
 CREATE INDEX idx_users_email ON users(email);   
--- SELECT id, password_hash FROM users WHERE email = 'user@example.com';
--- 主要用于登录的时候
--- token 会负责其它的东西
-
 
 CREATE TABLE posts (
     id SERIAL PRIMARY KEY,                      -- 生成唯一的id
@@ -37,7 +32,6 @@ CREATE TABLE posts (
     bookmark_count INT NOT NULL DEFAULT 0,
     is_anonymous BOOLEAN NOT NULL DEFAULT FALSE,    -- 是不是匿名发帖子 可以匿名
     status VARCHAR(20) NOT NULL DEFAULT 'published' CHECK (status IN ('published', 'draft', 'hidden_by_admin')),
-    -- 'published', 'draft', 'hidden_by_admin' 只能是这三种形态
     -- 
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -161,20 +155,9 @@ CREATE TABLE notifications (
     action_type VARCHAR(50) NOT NULL,
 
     source_id INT NOT NULL,
-    -- source_id：源ID
-    -- 如果 action_type 是 'like_post'，那么 source_id 就是被点赞的帖子的 post_id
-    -- 如果 action_type 是 'comment_on_post'，那么 source_id 就是那条新评论的 comment_id
-    -- 这样，当用户点击这条通知时，前端就知道应该跳转到哪个帖子或哪条评论的页面
-    -- 这样设计会好很多啊 
-
     is_read BOOLEAN NOT NULL DEFAULT FALSE,
-    -- 是否已读
-
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-
-
     CONSTRAINT fk_recipient_user FOREIGN KEY(recipient_user_id) REFERENCES users(id) ON DELETE CASCADE,
-    -- 对应通知者的id 加一个 管理员界面
     CONSTRAINT fk_actor_user FOREIGN KEY(actor_user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 CREATE INDEX idx_notifications_recipient_id ON notifications(recipient_user_id);

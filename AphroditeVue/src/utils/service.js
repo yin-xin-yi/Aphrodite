@@ -2,7 +2,7 @@ import axios from 'axios';
 import { GetToken, SetToken, RemoveToken } from './token'; 
 
 const service = axios.create({
-  baseURL: '/api', 
+  baseURL: 'http://localhost:8080/api', 
   timeout: 5000 
 });
 
