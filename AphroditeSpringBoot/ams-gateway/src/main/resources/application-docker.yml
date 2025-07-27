@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: ams_register_api
+              uri: http://register:8081
+              predicates:
+                - Path=/api/auth/register
+            - id: ams_login_api
+              uri: http://login:8082    
+              predicates:
+                - Path=/api/auth/login
+            - id: ams_fetchdata_api
+              uri: http://fetchdate:8083
+              predicates:
+                - Path=/api/auth/fetchdata
+

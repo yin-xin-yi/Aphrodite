@@ -1,10 +1,9 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
-import { useRouter } from 'vue-router'; 
+import { useRouter } from 'vue-router';
 import { HandleLogin, HandleRegister } from '@/api/rl';
-import { SetToken } from '@/utils/auth';
 
-const router = useRouter(); 
+const router = useRouter();
 const islogin = ref(true);
 const LoginForm = reactive({
     username: '',
@@ -23,16 +22,17 @@ const SubmitLogin = async () => {
     }
     try {
         const response = await HandleLogin(LoginForm);
-        if (response && response.token) {
+        if (response.code == 200)
+        {
             alert(response.message || '登录成功！');
-            SetToken(response.token);
             router.push({ name: 'Home' });
-        } else {
-            alert(response.message || '登录失败，请检查用户名或密码！');
         }
-    } catch (error) {
+        else if(response.code == 401){
+            alert(response.message)
+        }
+    }
+    catch (error) {
         console.error('登录请求失败:', error);
-        alert('服务器开小差了，请稍后再试！');
     }
 };
 
@@ -46,7 +46,8 @@ const SubmitRegister = async () => {
         if (response && response.success) {
             alert(response.message || '注册成功！现在可以登录了。');
             // 注册成功后，清空表单并切换到登录页
-            islogin.value = true;
+            router.push({ name: "Home" })
+
             Object.assign(RegisterForm, { username: '', email: '', password: '' });
         } else {
             alert(response.message || '注册失败，请稍后再试！');

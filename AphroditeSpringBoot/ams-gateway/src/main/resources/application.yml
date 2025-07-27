@@ -1,24 +1,4 @@
-server:
-  port: 8080
-
 spring:
   application:
     name: ams-gateway
-  
-  cloud:
-    gateway:
-      routes:
-        - id: ams_login_api 
-          uri: http://login:8081 
-          predicates:
-            - Path=/api/auth/login 
-    
-        - id: ams_register_api 
-          uri: http://register:8082
-          predicates:
-            - Path=/api/auth/register
 
-        - id: ams_fetchdata_api
-          uri: http://fetchdate:8083
-          predicates:
-            - Path=/api/auth/fetchdata

@@ -1,0 +1,18 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: ams_auth
+              uri: http://localhost:8081 
+              predicates:
+                - Path=/api/auth/** 
+            - id: ams_fetchdata_api
+              uri: http://localhost:8083 
+              predicates:
+                - Path=/api/auth/fetchdata
+

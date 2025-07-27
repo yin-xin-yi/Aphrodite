@@ -1,10 +1,30 @@
 const USERNAME_KEY = 'username';
 const USERID_KEY = 'userid';
 const EMAIL_KEY = 'email';
+const TOKEN_KEY = 'Token';
 
+/**
+ * 将 Token 保存到 localStorage
+ * 
+ */
 export function SetToken(token) {
-    return localStorage.setItem(TOKEN_KEY, token);
+  localStorage.setItem(TOKEN_KEY, token);
 }
+
+export function SetUserId(id)
+{
+    localStorage.setItem(USERID_KEY,id);
+}
+
+export function SetUserName(username)
+{
+    localStorage.setItem(USERNAME_KEY,username)
+}
+
+export function GetToken() {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
 
 export function GetUserName() {
     return localStorage.getItem(USERNAME_KEY);

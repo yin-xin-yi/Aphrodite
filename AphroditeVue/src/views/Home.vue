@@ -3,7 +3,7 @@ import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { FetchAllPosts } from '@/api/post.js'
 import { GetUserName } from '@/utils/auth';
-
+import { onMounted } from 'vue';
 // ------------------------------------------------------------------------------------------
 /**
  * 参数设置
@@ -67,15 +67,16 @@ const HandleLogout = () => {
 onMounted(async () => {
     try {
         const response = await FetchAllPosts();
-        if (response && response.data) {
+        if (response.code == 200) {
             posts.value = response.data;
         }
+        else{
+            alert("帖子内容为空");
+        }
+
     } catch (error) {
         console.error("获取帖子失败:", error);
-        alert("获取帖子失败")
-        // 
     } finally {
-        // 无论成功还是失败
         isloading.value = false;
     }
 })
@@ -146,15 +147,13 @@ onMounted(async () => {
         </main>
     </div>
 </template>
-
 <style scoped>
-/* 🎨 核心设计语言：颜色变量和字体 */
 :root {
-    --soft-pink: #e8c2ca;
-    --soft-blue: #b2c7e3;
-    --accent-pink: #d89aab;
-    --text-dark: #3a4b60;
-    --text-light: #6e7d8d;
+    --soft-pink: #F7CAC9;
+    --soft-blue: #92A8D1;
+    --accent-pink: #C7758A;
+    --text-dark: #4A4453;
+    --text-light: #8D839C;
     --glass-bg: rgba(255, 255, 255, 0.25);
     --glass-border: rgba(255, 255, 255, 0.4);
     --sidebar-bg: rgba(255, 255, 255, 0.15);
@@ -200,11 +199,18 @@ onMounted(async () => {
     flex-shrink: 0;
     background: var(--sidebar-bg);
     backdrop-filter: blur(15px);
-    border-right: 1px solid var(--glass-border);
+    /* 【关键改动 ①】: 增强侧边栏边界感 */
+    /* 我们用一层柔和的阴影来代替几乎看不见的边框，营造出悬浮感 */
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    /* 让边框稍微明显一点 */
+    box-shadow: 4px 0px 25px rgba(0, 0, 0, 0.08);
+    /* 添加右侧阴影，制造深度 */
     display: flex;
     flex-direction: column;
     padding: 20px;
     color: var(--text-dark);
+    transition: box-shadow 0.3s ease;
+    /* 为阴影添加过渡效果 */
 }
 
 .sidebar-header .logo {
@@ -232,6 +238,8 @@ onMounted(async () => {
 .sidebar-nav li.active {
     background-color: var(--active-bg);
     font-weight: bold;
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
+    /* 给活动项添加一点内发光效果 */
 }
 
 .sidebar-nav li:hover:not(.active) {
@@ -252,7 +260,6 @@ onMounted(async () => {
 
 .sidebar-footer {
     margin-top: auto;
-    /* 将页脚推到底部 */
     padding-top: 20px;
     border-top: 1px solid var(--glass-border);
 }
@@ -269,6 +276,8 @@ onMounted(async () => {
     border-radius: 50%;
     margin-right: 10px;
     background: white;
+    border: 2px solid var(--glass-border);
+    /* 给头像加个边框，更精致 */
 }
 
 .logout-button {
@@ -285,6 +294,8 @@ onMounted(async () => {
 .logout-button:hover {
     background-color: var(--accent-pink);
     color: white;
+    box-shadow: 0 2px 10px -2px var(--accent-pink);
+    /* 悬浮时加一点辉光效果 */
 }
 
 /* 主内容区样式 */
@@ -301,31 +312,34 @@ onMounted(async () => {
     align-items: center;
     margin-bottom: 30px;
     color: white;
+    /* 【关键改动 ②】: 给主内容区的头部也增加一点结构感 */
+    padding: 10px;
+    position: relative;
 }
 
 .main-header h2 {
     font-size: 24px;
     font-weight: 400;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .btn-primary {
-    /* 复用之前的按钮样式 */
     padding: 12px 25px;
     font-size: 16px;
     font-weight: bold;
-    color: rgb(14, 12, 12);
-    background: linear-gradient(90deg, var(--accent-pink), var(--soft-blue));
-    border: none;
+    color: rgb(216, 212, 178);
+    background-color: var(--accent-pink);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(178, 199, 227, 0.4);
+    background-color: #f1f1a4;
+    box-shadow: 0 6px 20px rgba(200, 117, 138, 0.4);
 }
 
 /* 帖子卡片样式 */
@@ -341,12 +355,13 @@ onMounted(async () => {
     border-radius: 15px;
     padding: 20px;
     color: var(--text-dark);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
+    box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .post-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.12);
 }
 
 .post-header {
