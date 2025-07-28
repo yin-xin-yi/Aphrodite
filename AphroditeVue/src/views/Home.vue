@@ -4,6 +4,9 @@ import { useRouter } from 'vue-router';
 import { FetchAllPosts } from '@/api/post.js'
 import { GetUserName } from '@/utils/auth';
 import { onMounted } from 'vue';
+import { TimeFormat } from '../utils/timeformat';
+import EditorPost from '@/views/component/EditorPost.vue';
+
 // ------------------------------------------------------------------------------------------
 /**
  * 参数设置
@@ -13,6 +16,8 @@ import { onMounted } from 'vue';
 const router = useRouter();
 const activeview = ref('home');
 const isloading = ref(true);
+const showEditor = ref(false);
+
 // ------------------------------------------------------------------------------------------
 
 
@@ -40,6 +45,75 @@ const user = reactive({
     name: GetUserName() || '游客',
     avatar: 'https://api.multiavatar.com/Yxy.svg'
 });
+
+const HandlePostCreated = (new_post) => {
+    const format = MapPostToCardData(new_post);
+    posts.value.unshift(format);
+    CloseEditor();
+};
+
+
+
+// {
+//     "isAnonymous": false,
+//     "user": {
+//         "userId": 1,
+//         "username": "你的用户名"
+//     },
+//     "post": {
+//         "postId": 123, // 新帖子的ID
+//         "title": "刚刚发布的标题",
+//         "content": "刚刚发布的内容"
+//     },
+//     "time": {
+//         "createAt": "2023-10-28T12:00:00Z",
+//         "updateAt": "2023-10-28T12:00:00Z"
+//     },
+//     "count": {
+//         "viewCount": 0,
+//         "likeCount": 0,
+//         "commentCount": 0
+//     }
+// }
+const MapPostToCardData = (postdata) => {
+    let finalUsername = '匿名用户';
+    let finalAvatar = 'https://api.multiavatar.com/匿名.svg';
+    let finalUserId = null;
+
+    if (!postdata.isAnonymous && postdata.user) {
+        finalUsername = postdata.user.username;
+        finalAvatar = `https://api.multiavatar.com/${postdata.user.username}.svg`;
+        finalUserId = postdata.user.userId;
+    }
+
+    return {
+        author: {
+            username: finalUsername,
+            userid: finalUserId,
+            avatar: finalAvatar
+        },
+        post: {
+            id: postdata.post.postId,
+            content: postdata.post.content,
+            title: postdata.post.title || '',
+        },
+        time: {
+            create_at: TimeFormat(postdata.time.createAt),
+            update_at: TimeFormat(postdata.time.updateAt),
+        },
+        count: {
+            views: postdata.count.viewCount,
+            likes: postdata.count.likeCount,
+            comments: postdata.count.commentCount,
+        }
+    }
+
+}
+
+const GoToPostDetail = () => {
+
+
+}
 // ------------------------------------------------------------------------------------------
 
 
@@ -62,25 +136,37 @@ const HandleLogout = () => {
     // 
     router.push('/RegisterAndLogin');
 };
+const OpenEditor = () => {
+    showEditor.value = true;
+};
+const CloseEditor = () => {
+    showEditor.value = false;
+};
+
 // ------------------------------------------------------------------------------------------
 
 onMounted(async () => {
     try {
-        const response = await FetchAllPosts();
-        if (response.code == 200) {
-            posts.value = response.data;
-        }
-        else{
-            alert("帖子内容为空");
+        const postsArray = await FetchAllPosts();
+        if (Array.isArray(postsArray)) {
+            if (postsArray.length > 0) {
+                posts.value = postsArray.map(MapPostToCardData);
+            } else {
+                posts.value = []; 
+                console.log("获取成功，但帖子列表为空。");
+            }
+        } else {
+            console.error("获取帖子失败: API返回的数据格式不正确", postsArray);
+            alert("获取帖子失败，请稍后重试。");
         }
 
     } catch (error) {
         console.error("获取帖子失败:", error);
+        alert("网络错误或服务器异常，无法获取帖子");
     } finally {
         isloading.value = false;
     }
 })
-
 
 </script>
 
@@ -120,31 +206,38 @@ onMounted(async () => {
         <main class="main-content">
             <header class="main-header">
                 <h2>校园动态</h2>
-                <button class="btn-primary">发布新帖</button>
+                <button class="btn-primary" @click="OpenEditor">发布新帖</button>
             </header>
 
             <!-- 帖子流 -->
             <!-- 所有的帖子 都在这里 -->
             <div class="post-feed">
-                <div v-for="post in posts" :key="post.id" class="post-card">
+                <div v-for="post in posts" :key="post.post.id" class="post-card" @click="GoToPostDetail(post.post.id)">
+
                     <div class="post-header">
                         <img :src="post.author.avatar" alt="author avatar" class="author-avatar">
                         <div class="author-info">
-                            <span class="author-name">{{ post.author.name }}</span>
-                            <span class="post-timestamp">{{ post.timestamp }}</span>
+                            <span class="author-name">{{ post.author.username }}</span>
+                            <span class="post-timestamp">{{ post.time.create_at }}</span>
                         </div>
                     </div>
+
                     <div class="post-body">
-                        <p>{{ post.content }}</p>
+                        <h3 v-if="post.post.title" class="post-title">{{ post.post.title }}</h3>
+                        <p>{{ post.post.content }}</p>
                     </div>
+
                     <div class="post-footer">
-                        <button class="action-btn">❤️ {{ post.likes }}</button>
-                        <button class="action-btn">💬 {{ post.comments }}</button>
+                        <button class="action-btn">❤️ {{ post.count.likes }}</button>
+                        <button class="action-btn">💬 {{ post.count.comments }}</button>
+                        <button class="action-btn">👀 {{ post.count.views }}</button>
                         <button class="action-btn">🔗 分享</button>
                     </div>
                 </div>
             </div>
         </main>
+
+        <EditorPost v-if="showEditor" @close="CloseEditor" @post-created="HandlePostCreated" />
     </div>
 </template>
 <style scoped>

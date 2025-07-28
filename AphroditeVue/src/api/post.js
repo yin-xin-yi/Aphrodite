@@ -1,8 +1,13 @@
-import service from '@/utils/service';
+import service from "@/utils/service";
 
-export function FetchAllPosts() {
-  return service({
-    url: '/data/fetchdata_onmounted', // baseURL 是 /api，所以这里写相对路径
-    method: 'get'
-  });
-}
+export const FetchAllPosts = async () => {
+  console.log("FetchAllPosts");
+  
+  return await service.get("/data/fetchdata_onmounted");
+};
+export const FetchPostDetail = async (postid) => {
+  return await service.get(`/data/fetchpost/${postid}`);
+};
+export const CreatePost = async (post_inf) => {
+  return await service.post("/data/createpost", post_inf);
+};

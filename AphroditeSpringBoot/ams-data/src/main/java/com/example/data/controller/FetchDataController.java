@@ -1,4 +1,4 @@
-package com.example.ams_fetchdata.controller;
+package com.example.data.controller;
 
 import java.util.List;
 
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.ams_fetchdata.entity.Post;
-import com.example.ams_fetchdata.service.PostService;
+import com.example.data.dto.PostResponseDTO;
+import com.example.data.service.PostService;
 
 @RestController
 @RequestMapping("api/data")
@@ -21,8 +21,8 @@ public class FetchDataController {
     @GetMapping("/fetchdata_onmounted")
     public ResponseEntity<?> fetchData() {
         try {
-            List<Post> allPosts = postService.getAllPosts();
-            return ResponseEntity.ok(allPosts);
+            List<PostResponseDTO> allPostsDTO = postService.getAllPosts();
+            return ResponseEntity.ok(allPostsDTO);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("获取帖子数据时发生错误: " + e.getMessage());
         }

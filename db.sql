@@ -31,6 +31,7 @@ CREATE TABLE posts (
     comment_count INT NOT NULL DEFAULT 0,
     bookmark_count INT NOT NULL DEFAULT 0,
     is_anonymous BOOLEAN NOT NULL DEFAULT FALSE,    -- 是不是匿名发帖子 可以匿名
+    
     status VARCHAR(20) NOT NULL DEFAULT 'published' CHECK (status IN ('published', 'draft', 'hidden_by_admin')),
     -- 
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -161,3 +162,12 @@ CREATE TABLE notifications (
     CONSTRAINT fk_actor_user FOREIGN KEY(actor_user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 CREATE INDEX idx_notifications_recipient_id ON notifications(recipient_user_id);
+
+WITH new_user AS (
+    INSERT INTO users (username, nickname, email, password_hash, bio)
+    VALUES ('testuser', '测试用户', 'testuser@example.com', '123', '这是一个用于测试的账')
+    RETURNING id
+)
+INSERT INTO posts (user_id, title, content, is_anonymous)
+SELECT id, '我的第一个测试帖子', '这是帖子的正文内容，用于展示和测试数据库是否正常工作。', FALSE
+FROM new_user;

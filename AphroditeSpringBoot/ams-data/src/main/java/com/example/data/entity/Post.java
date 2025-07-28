@@ -1,4 +1,4 @@
-package com.example.ams_fetchdata.entity;
+package com.example.data.entity;
 
 import java.time.OffsetDateTime;
 
@@ -7,6 +7,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,11 +16,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 //  @Data Lombok 库 就是有很多 get set 等方式很方便
 //  @Entity 就是一个实体 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"user"})
 @Entity
 @Table(name = "posts")
 public class Post {
@@ -28,7 +38,7 @@ public class Post {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     /**
      * @ManyToOne JPA 风格 表示多对1 查询一个 Post 对象时 不要立刻去数据库里把关联的 User 对象也查出来
@@ -56,19 +66,21 @@ public class Post {
     @Column(name = "is_anonymous")
     private boolean isAnonymous = false;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PostStatus status = PostStatus.PUBLISHED;
 
     /**
      * updatable = false 它告诉 JPA：“这个列的值在插入后就不能再被更新了”
      */
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", updatable = false, nullable = false)
     @CreationTimestamp // 让Hibernate在插入时自动填充创建时间
     private OffsetDateTime createdAt;
 
     /**
      * 当这个实体被更新并保存时，自动将当前的时间戳填入这个字段
      */
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     private OffsetDateTime updatedAt;
 }

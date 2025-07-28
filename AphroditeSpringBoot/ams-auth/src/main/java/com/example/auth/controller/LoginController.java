@@ -75,6 +75,14 @@ public class LoginController {
         Optional<Users> userOptional = userRepository.findByUsername(loginRequest.getUsername());
 
         if (userOptional.isPresent()) {
+
+            /// 这里是测试 记得删除 TODO: 删除
+            if ("testuser".equals(loginRequest.getUsername())) {
+                String token = tokenservice.generateToken("testuser");
+                Data loginResponse = new Data(token, "testuser", 1L);
+                return LoginResponse.success("登录成功!", loginResponse);
+            }
+
             Users user = userOptional.get();
             if (passwordService.checkPassword(loginRequest.getPassword(), user.getPasswordHash())) {
                 String token = tokenservice.generateToken(user.getUsername());

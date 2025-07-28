@@ -7,12 +7,13 @@ spring:
       server:
         webflux:
           routes:
-            - id: ams_auth
+            - id: ams-auth
               uri: http://localhost:8081 
               predicates:
                 - Path=/api/auth/** 
-            - id: ams_fetchdata_api
+              
+            - id: ams-data
               uri: http://localhost:8083 
               predicates:
-                - Path=/api/auth/fetchdata
+                - Path=/api/data/**
 
