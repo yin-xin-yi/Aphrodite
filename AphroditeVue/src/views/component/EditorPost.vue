@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { CreatePost } from '@/api/post.js';
 import { GetUserId } from '@/utils/auth';
+import {PostStatus} from '@/common/PostStatus'
 
 const emit = defineEmits(['close', 'post-created']);
 
@@ -22,23 +23,25 @@ const HandleSubmit = async () => {
 
     try {
         const postData = {
-            userid: userid,
+            userId: userid,
             title: title.value,
             content: content.value,
-            isAnonymous: isAnonymous.value
+            isAnonymous: isAnonymous.value,
+            postStatus: PostStatus.published
         };
         const response = await CreatePost(postData);
 
-        if (response.code === 201) { 
-            emit('post-created', response.data);
+        if (response.code && response.code === 200) { 
+            emit('post-created', response);
             alert('发布成功！');
             closeModal();
         } else {
             alert(`发布失败: ${response.message || '未知错误'}`);
         }
+
     } catch (error) {
         console.error("发布帖子失败:", error);
-        alert('发布失败，请检查网络或联系管理员。');
+        alert('发布失败，请检查网络或联系管理员');
     } finally {
         isSubmitting.value = false;
     }

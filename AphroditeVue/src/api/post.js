@@ -9,5 +9,5 @@ export const FetchPostDetail = async (postid) => {
   return await service.get(`/data/fetchpost/${postid}`);
 };
 export const CreatePost = async (post_inf) => {
-  return await service.post("/data/createpost", post_inf);
+  return await service.post("/data/addpost", post_inf);
 };

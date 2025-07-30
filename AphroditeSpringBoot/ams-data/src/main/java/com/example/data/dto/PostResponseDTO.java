@@ -12,6 +12,8 @@ public class PostResponseDTO {
      */
     private boolean isAnonymous;
 
+    private int code;
+
     private UserInfoDTO user;
 
     private PostInfoDTO post;

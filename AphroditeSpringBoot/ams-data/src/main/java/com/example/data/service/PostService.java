@@ -3,6 +3,8 @@ package com.example.data.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,8 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class PostService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PostService.class);
 
     // 如果没有 @Autowired
     // private PostRepository postRepository = new PostRepositoryImpl();
@@ -44,10 +48,10 @@ public class PostService {
     @Transactional
     public PostResponseDTO addPost(PostRequestDTO post_out) {
         Post post = new Post();
+        logger.info("创建post的时候 传入的post_out 信息是{}", post_out);
         post.setAnonymous(post_out.getIsAnonymous());
         post.setContent(post_out.getContent());
         post.setTitle(post_out.getTitle());
-
         post.setStatus(post_out.getPostStatus());
 
         post.setBookmarkCount(0);
@@ -60,13 +64,15 @@ public class PostService {
         post.setUser(user);
         Post savepost = postRepository.save(post);
 
-        return buildResponse(savepost.getId(), post_out.getIsDeteal());
+        return buildResponse(savepost.getId(), false);
     }
 
     public PostResponseDTO buildResponse(Long postId, Boolean isdetail) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFind("这个postid 不存在" + postId));
-        return convertToDTO(post, isdetail);
+
+        // 这个进行安全性 检查
+        return convertToDTO(post, Boolean.TRUE.equals(isdetail));
     }
 
     /**
@@ -114,7 +120,7 @@ public class PostService {
             userinfo.setUsername(user.getUsername());
             postResponseDTO.setUser(userinfo);
         }
-
+        postResponseDTO.setCode(200);
         postResponseDTO.setCount(cid);
         postResponseDTO.setPost(pid);
         postResponseDTO.setTime(time);
