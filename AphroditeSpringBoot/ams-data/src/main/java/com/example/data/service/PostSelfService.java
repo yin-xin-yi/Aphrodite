@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.example.data.dto.CountInfoDTO;
+import com.example.data.dto.DelPostResponseDTO;
 import com.example.data.dto.PostInfoDTO;
 import com.example.data.dto.PostResponseDTO;
 import com.example.data.dto.TimeInfoDTO;
@@ -35,6 +37,22 @@ public class PostSelfService {
         List<PostResponseDTO> postDtos = posts.stream().map(post -> convertToDTO(post, false)) // 调用下面的新方法
                 .collect(Collectors.toList());
         return postDtos;
+    }
+
+    /**
+     * 删除帖子
+     */
+    public DelPostResponseDTO DelPost(Long postId) {
+        DelPostResponseDTO delPostResponseDTO = new DelPostResponseDTO();
+        try {
+            postRepository.deleteById(postId);
+            delPostResponseDTO.setCode(200);
+            delPostResponseDTO.setMessage("帖子删除成功!");
+        } catch (EmptyResultDataAccessException e) {
+            delPostResponseDTO.setCode(500);
+            delPostResponseDTO.setMessage("删除失败 服务器内部错误");
+        }
+        return delPostResponseDTO;
     }
 
     /**
