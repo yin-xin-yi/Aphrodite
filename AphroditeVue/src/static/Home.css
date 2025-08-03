@@ -1,0 +1,178 @@
+
+:root {
+    --blue-primary: #769fcd;
+    --blue-medium: #b9d7ea;
+    --blue-light: #d6e6f2;
+    --blue-whitish: #f7fbfc;
+    --text-primary: #333a4d;
+    --text-secondary: #6c7a89;
+    --text-on-accent: #ffffff;
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --sidebar-bg: rgba(247, 251, 252, 0.3);
+    --active-bg: rgba(247, 251, 252, 0.6);
+}
+
+.home-layout {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+        "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    color: var(--text-primary);
+    background: linear-gradient(45deg,
+            var(--blue-medium),
+            var(--blue-light),
+            var(--blue-medium),
+            var(--blue-light));
+    background-size: 400% 400%;
+    animation: gradient-move 20s ease infinite;
+}
+
+@keyframes gradient-move {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--sidebar-bg);
+    backdrop-filter: blur(15px);
+    border-right: 1px solid var(--glass-border);
+    box-shadow: 4px 0px 25px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.sidebar-header .logo {
+    font-size: 28px;
+    font-weight: 300;
+    text-align: center;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+    color: var(--text-primary);
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav li {
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.sidebar-nav li.active {
+    background-color: var(--active-bg);
+    font-weight: bold;
+    color: var(--blue-primary);
+}
+
+.sidebar-nav li:hover:not(.active) {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-nav a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-nav .icon {
+    margin-right: 15px;
+    font-style: normal;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--glass-border);
+}
+
+.user-profile-footer {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    background: white;
+    border: 2px solid var(--glass-border);
+}
+
+.logout-button {
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    border: 1px solid var(--blue-primary);
+    color: var(--blue-primary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+}
+
+.logout-button:hover {
+    background-color: var(--blue-primary);
+    color: var(--text-on-accent);
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 40px;
+    overflow-y: auto;
+    max-height: 100vh;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 10px;
+    position: relative;
+}
+
+.main-header h2 {
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--text-primary);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.btn-primary {
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-on-accent);
+    background-color: var(--blue-primary);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(118, 159, 205, 0.4);
+}

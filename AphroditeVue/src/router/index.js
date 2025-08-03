@@ -1,35 +1,46 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { GetToken } from '../utils/auth'
+import { GetToken } from '@/utils/auth'
 
 const routes = [
   {
     path: '/RegisterAndLogin',
     name: 'RegisterAndLogin',
-    component:() => import('../views/RegisterAndLogin.vue')
+    component:() => import('@/views/RegisterAndLogin.vue')
   },
   {
     path: '/Home',
     name: 'Home',
-    component:() => import('../views/Home.vue'),
-    meta: { 
-      // 这里表示 需要认证
-      requiresAuth: true, 
-      title: '校园墙'
-    }
+    component: () => import('@/views/Home.vue'),
+    redirect: '/Home/PostFeed',
+    children: [
+      {
+        path: 'PostFeed',
+        name: 'PostFeed',
+        component: () => import('@/views/component/PostFeed.vue')
+      },
+      {
+        path: 'MyPosts',
+        name: 'MyPosts',
+        component: () => import('@/views/component/MyPosts.vue')
+      },
+      {
+        path: 'UserProfile', 
+        name: 'UserProfile',
+        component: () => import('@/views/component/UserProfile.vue')
+      }
+    ]
   },
   {
     path: '/', 
     name: 'Index',
-    component: () => import('../views/Index.vue'),
+    component: () => import('@/views/Index.vue'),
   },
-
 ]
+
 const router = createRouter({
   history: createWebHistory(), 
   routes: routes
 })
-
-
 
 router.beforeEach((to, from, next) => {
   const hasToken = GetToken();

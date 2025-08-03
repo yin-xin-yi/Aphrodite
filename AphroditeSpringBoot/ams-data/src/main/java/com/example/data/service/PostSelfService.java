@@ -3,82 +3,42 @@ package com.example.data.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.data.dto.CountInfoDTO;
 import com.example.data.dto.PostInfoDTO;
-import com.example.data.dto.PostRequestDTO;
 import com.example.data.dto.PostResponseDTO;
 import com.example.data.dto.TimeInfoDTO;
 import com.example.data.dto.UserInfoDTO;
 import com.example.data.entity.Post;
 import com.example.data.entity.User;
-import com.example.data.exception.ResourceNotFind;
 import com.example.data.repository.PostRepository;
 
-import jakarta.transaction.Transactional;
-
+/**
+ * 预备知识
+ *
+ * 告诉 Spring IoC 容器：“请扫描到我，为我创建一个实例 依赖注入的方式（通常使用 @Autowired 注解）来使用它，而不需要自己手动 new
+ * PostSelfService() 这个 就比 C++ 掉了不知多少倍
+ */
 @Service
-public class PostService {
+public class PostSelfService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PostService.class);
-
-    // 如果没有 @Autowired
-    // private PostRepository postRepository = new PostRepositoryImpl();
-    // 就需要这么手动实现
     @Autowired
-    private PostRepository postRepository;
+    PostRepository postRepository;
 
     /**
-     * 获取所有帖子，用于首页信息流
-     *
-     * 知识预备 1. .collect() - 收集的动作 2. Collectors 这个是打包的说明书 toList 就是具体打包方式
+     * 获取帖子
      */
-    public List<PostResponseDTO> getAllPosts() {
-        List<Post> postsWithUsers = postRepository.findAllWithUserOrderByCreatedAtDesc();
-        return postsWithUsers.stream()
-                .map(post -> convertToDTO(post, false)) // 调用下面的新方法
+    public List<PostResponseDTO> GetSelfPosts(Long userId) {
+        List<Post> posts = postRepository.findByUserId(userId);
+        List<PostResponseDTO> postDtos = posts.stream().map(post -> convertToDTO(post, false)) // 调用下面的新方法
                 .collect(Collectors.toList());
+        return postDtos;
     }
 
     /**
-     * 创建和增加一个帖子 Transactional 这个作用是创建 数据库的事务
-     */
-    @Transactional
-    public PostResponseDTO addPost(PostRequestDTO post_out) {
-        Post post = new Post();
-        logger.info("创建post的时候 传入的post_out 信息是{}", post_out);
-        post.setAnonymous(post_out.getIsAnonymous());
-        post.setContent(post_out.getContent());
-        post.setTitle(post_out.getTitle());
-        post.setStatus(post_out.getPostStatus());
-
-        post.setBookmarkCount(0);
-        post.setCommentCount(0);
-        post.setLikeCount(0);
-        post.setViewCount(0);
-
-        User user = new User();
-        user.setId(post_out.getUserId());
-        post.setUser(user);
-        Post savepost = postRepository.save(post);
-
-        return buildResponse(savepost.getId(), false);
-    }
-
-    public PostResponseDTO buildResponse(Long postId, Boolean isdetail) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new ResourceNotFind("这个postid 不存在" + postId));
-
-        // 这个进行安全性 检查
-        return convertToDTO(post, Boolean.TRUE.equals(isdetail));
-    }
-
-    /**
-     *
+     * 工具类 转换成 dto
      */
     private PostResponseDTO convertToDTO(Post post, boolean isdetail) {
         PostResponseDTO postResponseDTO = new PostResponseDTO();
@@ -130,4 +90,5 @@ public class PostService {
 
         return postResponseDTO;
     }
+
 }

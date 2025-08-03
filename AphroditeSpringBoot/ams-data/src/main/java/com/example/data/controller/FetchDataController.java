@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.data.dto.PostResponseDTO;
 import com.example.data.service.PostService;
 
+/**
+ * 预备知识： 就是internalServerErrir 就是 内部服务器错误 标记为 500
+ */
 @RestController
 @RequestMapping("api/data")
 public class FetchDataController {

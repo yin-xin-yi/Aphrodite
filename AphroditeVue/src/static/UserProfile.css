@@ -1,0 +1,138 @@
+/* 
+  首先，我们定义一套更深、更具质感的颜色变量。
+  这套颜色将贯穿整个设计，确保风格统一。
+*/
+:root {
+    /* 深邃的石蓝色，作为主要的强调色和按钮背景色 */
+    --blue-primary: #4C6A92; 
+    /* 柔和的灰蓝色，用于次要元素和悬停效果 */
+    --blue-medium: #8FA8BF;
+    /* 极浅的钢蓝色，可以用作背景点缀 */
+    --blue-light: #DCE4EC;
+    /* 主要文本颜色，深灰，保证可读性 */
+    --text-primary: #2C3E50;
+    /* 次要文本颜色，如标签和提示文字 */
+    --text-secondary: #566573;
+    /* 白色文本，用于深色背景上 */
+    --text-on-accent: #FFFFFF;
+    /* 玻璃边框，比之前更清晰一点 */
+    --glass-border: rgba(255, 255, 255, 0.35); 
+}
+
+.profile-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.profile-section {
+    /* 背景色透明度降低，使内容更突出，同时色调与新主题协调 */
+    background: rgba(245, 248, 252, 0.5);
+    backdrop-filter: blur(12px); /* 模糊效果稍微增强 */
+    border: 1px solid var(--glass-border);
+    border-radius: 16px; /* 圆角稍大，更显柔和 */
+    padding: 35px;
+    color: var(--text-primary);
+    /* 新增：添加了柔和的阴影，极大地提升了面板的立体感和层次感 */
+    box-shadow: 0 8px 32px rgba(44, 62, 80, 0.15);
+    transition: all 0.3s ease;
+}
+
+.profile-section:hover {
+    /* 新增：鼠标悬停时，阴影和边框轻微变化，增加交互感 */
+    box-shadow: 0 12px 40px rgba(44, 62, 80, 0.18);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.profile-section h3 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-weight: 500; /* 字体加粗一点，更有标题感 */
+    color: var(--text-primary);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08); /* 使用半透明黑色作为分割线，更清晰 */
+    padding-bottom: 15px;
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* 表单项间距稍大 */
+}
+
+.form-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-item label {
+    margin-bottom: 10px;
+    font-size: 0.95em;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.form-item input {
+    padding: 14px 18px;
+    border: 1px solid transparent; /* 默认状态下边框设为透明，视觉更干净 */
+    border-radius: 10px; /* 圆角与外部面板协调 */
+    background-color: rgba(255, 255, 255, 0.6);
+    color: var(--text-primary);
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.form-item input:focus {
+    border-color: var(--blue-primary);
+    box-shadow: 0 0 0 3px rgba(76, 106, 146, 0.3);
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.avatar-item {
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+
+.profile-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid var(--glass-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.change-avatar-btn, .submit-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    align-self: flex-start;
+}
+
+.change-avatar-btn {
+    background-color: transparent;
+    border: 1px solid var(--blue-medium);
+    color: var(--blue-primary);
+}
+
+.change-avatar-btn:hover {
+    background-color: var(--blue-light);
+    border-color: var(--blue-primary);
+    color: var(--text-primary);
+}
+
+.submit-btn {
+    background-color: var(--blue-primary);
+    color: var(--text-on-accent);
+    margin-top: 10px;
+    box-shadow: 0 4px 15px rgba(76, 106, 146, 0.2);
+}
+
+.submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 20px rgba(76, 106, 146, 0.3);
+}

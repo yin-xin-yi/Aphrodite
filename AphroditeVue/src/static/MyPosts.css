@@ -1,0 +1,130 @@
+/* 
+  首先，我们定义一套与 Profile 页面风格统一的、更深邃的颜色变量。
+  这样可以确保整个应用的设计语言是一致的。
+*/
+:root {
+    /* 沿用之前定义的专业石蓝色作为主要操作色 */
+    --theme-accent: var(--blue-primary, #4C6A92); 
+    /* 定义一个更柔和、更精致的危险/删除色 */
+    --theme-delete-color: #D9534F;
+    /* 面板背景色，与 Profile 页面保持一致 */
+    --theme-panel-bg: rgba(245, 248, 252, 0.5);
+}
+
+.management-panel {
+    background: var(--theme-panel-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 30px;
+    color: var(--text-primary);
+    /* 新增：与 Profile 页面一致的阴影，创造深度和悬浮感 */
+    box-shadow: 0 8px 32px rgba(44, 62, 80, 0.15);
+}
+
+.loading-state,
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+    font-size: 1.1em;
+}
+
+.posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.post-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    /* 背景色稍加不透明，让内容更清晰 */
+    background-color: rgba(255, 255, 255, 0.4);
+    transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+}
+
+.post-item:hover {
+    transform: translateY(-4px);
+    /* 悬停时阴影更明显，边框更亮，反馈更强 */
+    box-shadow: 0 6px 20px rgba(44, 62, 80, 0.1);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.post-info {
+    flex-grow: 1;
+    /* 避免内容过长时挤压按钮区域 */
+    min-width: 0;
+}
+
+.post-title {
+    margin: 0 0 8px 0;
+    font-size: 1.15em;
+    font-weight: 600; /* 字体加粗，标题更突出 */
+    color: var(--text-primary);
+}
+
+.post-content-preview {
+    margin: 0 0 12px 0;
+    color: var(--text-secondary);
+    font-size: 0.95em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* 限制最大宽度，防止在宽屏上无限延伸 */
+    max-width: 95%; 
+}
+
+.post-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+.post-actions {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0; /* 防止按钮被压缩 */
+    margin-left: 20px;
+}
+
+.action-btn {
+    padding: 9px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500; /* 字体粗细适中 */
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.edit-btn {
+    background-color: var(--theme-accent);
+    color: rgb(107, 210, 226);
+    box-shadow: 0 2px 8px rgba(76, 106, 146, 0.2);
+}
+
+.edit-btn:hover {
+    background-color: #3B5478; 
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 106, 146, 0.3);
+}
+
+.delete-btn {
+    background-color: transparent;
+    border: 1px solid var(--theme-delete-color);
+    color: var(--theme-delete-color);
+}
+
+.delete-btn:hover {
+    background-color: var(--theme-delete-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(217, 83, 79, 0.3);
+}
