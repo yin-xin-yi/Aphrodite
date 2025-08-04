@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { GetSelfPosts } from "@/api/post";
+import { GetSelfPosts,DelPost } from "@/api/post";
 import { MapPostToCardData } from "@/utils/map";
 import { GetUserId } from "@/utils/auth.js";
 
@@ -11,7 +11,6 @@ onMounted(async () => {
   try {
     // GetSelfPosts 可以为个人 获取信息
     let user_id = GetUserId();
-    console.log("777");
     const response = await GetSelfPosts(user_id);
     if (Array.isArray(response)) {
       if (response.length > 0) {
@@ -38,13 +37,20 @@ const EditPost = (postId) => {
   alert(`功能开发中：准备编辑帖子 ${postId}`);
 };
 
-const DeletePost = (postId) => {
-  console.log(`删除帖子 ID: ${postId}`);
+const DeletePost = async (postId) => {
   if (confirm(`确定要删除这篇帖子 (ID: ${postId}) 吗？`)) {
-    myposts.value = myposts.value.filter((p) => p.post.id !== postId);
-    alert("帖子已删除（模拟）");
+    try{
+        const response = await DelPost(postId);
+        console.log(response.code, "  " , response.message);
+        myposts.value = myposts.value.filter((p) => p.post.id !== postId);
+    }
+    catch(error){
+      console.log(error.response.data.message)
+      console.log(error.response.data.code)
+    }
   }
 };
+
 </script>
 
 <template>

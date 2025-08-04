@@ -71,7 +71,7 @@ public class PostService {
 
     public PostResponseDTO buildResponse(Long postId, Boolean isdetail) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new ResourceNotFind("这个postid 不存在" + postId));
+                .orElseThrow(() -> new ResourceNotFind("这个postid 不存在"));
 
         // 这个进行安全性 检查
         return convertToDTO(post, Boolean.TRUE.equals(isdetail));

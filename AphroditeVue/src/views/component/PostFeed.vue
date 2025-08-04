@@ -28,7 +28,7 @@ onMounted(async () => {
       console.error("获取帖子失败: API返回的数据格式不正确", postsArray);
     }
   } catch (error) {
-    console.error("获取帖子失败:", error);
+    console.error("获取帖子失败:", error.response.data);
   } finally {
     isloading.value = false;
   }
