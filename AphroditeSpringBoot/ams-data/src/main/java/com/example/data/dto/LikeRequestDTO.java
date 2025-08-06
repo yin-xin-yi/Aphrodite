@@ -11,6 +11,4 @@ public class LikeRequestDTO {
 
     Long userId;
     Long postId;
-    // add del  两种方式
-    String action;
 }

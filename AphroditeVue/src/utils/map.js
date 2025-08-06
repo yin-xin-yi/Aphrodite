@@ -30,6 +30,7 @@ export function MapPostToCardData (postdata){
       views: postdata.count.viewCount,
       likes: postdata.count.likeCount,
       comments: postdata.count.commentCount,
+      isLiked:postdata.isLiked
     },
   };
 };

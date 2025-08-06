@@ -3,12 +3,11 @@ import { reactive, computed, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { GetUserName} from "@/utils/auth";
 import EditorPost from "@/views/component/EditorPost.vue";
-
+import { RemoveAuthInfo } from "../utils/auth";
 const router = useRouter();
 const route = useRoute();
 const ShowEditor = ref(false);
 
-// 用户姓名和用户头像
 const user = reactive({
   name: GetUserName() || "游客",
   avatar: `https://api.multiavatar.com/${GetUserName() || 'Yxy'}.svg`,
@@ -29,17 +28,14 @@ const PageTitle = computed(() => {
 });
 
 
-// 打开帖子编辑器
 const OpenEditor = () => {
   ShowEditor.value = true;
 };
 
-// 关闭帖子编辑器
 const CloseEditor = () => {
   ShowEditor.value = false;
 };
 
-// 创造帖子
 const HandlePostCreated = () => {
   CloseEditor();
   alert("发布成功！");
@@ -52,7 +48,7 @@ const HandlePostCreated = () => {
 
 // 登出
 const HandleLogout = () => {
-  RemoveToken();
+  RemoveAuthInfo();
   router.push("/RegisterAndLogin");
 };
 </script>
@@ -71,7 +67,6 @@ const HandleLogout = () => {
               <a><i class="icon">🏠</i> 首页</a>
             </li>
           </RouterLink>
-          <!-- 从 RouterLink 提供的作用域插槽中，解构出 navigate 方法和 isActive 状态 -->
           <RouterLink to="/Home/MyPosts" custom v-slot="{ navigate, isActive }">
             <li @click="navigate" :class="{ active: isActive }">
               <a><i class="icon">📄</i> 个人帖管理</a>

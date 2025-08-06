@@ -1,9 +1,10 @@
 import service from "@/utils/service";
+import { GetUserId } from "../utils/auth";
 
 export const FetchAllPosts = async () => {
-  console.log("FetchAllPosts");
-
-  return await service.get("/data/fetchdata_onmounted");
+  console.log("FetchAllPosts",GetUserId());
+  const userId = GetUserId();
+  return await service.get(`/data/fetchdata_onmounted/${userId}`);
 };
 export const FetchPostDetail = async (postid) => {
   return await service.get(`/data/fetchpost/${postid}`);

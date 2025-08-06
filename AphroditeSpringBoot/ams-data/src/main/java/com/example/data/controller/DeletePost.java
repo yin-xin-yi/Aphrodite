@@ -12,7 +12,7 @@ import com.example.data.dto.DelPostResponseDTO;
 import com.example.data.service.PostSelfService;
 
 @RestController
-@RequestMapping("/api/data")
+@RequestMapping("api/data")
 public class DeletePost {
 
     @Autowired

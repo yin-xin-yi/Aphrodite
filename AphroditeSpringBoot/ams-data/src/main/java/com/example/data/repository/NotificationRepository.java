@@ -9,5 +9,5 @@ import com.example.data.entity.User;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    void deleteByActorAndActionTypeAndSourceId(User actor, String actionType, Long sourceId);
+    void deleteByActorUserAndActionTypeAndSourceId(User actorUser, String actionType, Long sourceId);
 }

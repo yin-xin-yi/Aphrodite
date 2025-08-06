@@ -1,13 +1,6 @@
-/* 
-  首先，我们定义一套与 Profile 页面风格统一的、更深邃的颜色变量。
-  这样可以确保整个应用的设计语言是一致的。
-*/
 :root {
-    /* 沿用之前定义的专业石蓝色作为主要操作色 */
     --theme-accent: var(--blue-primary, #4C6A92); 
-    /* 定义一个更柔和、更精致的危险/删除色 */
     --theme-delete-color: #D9534F;
-    /* 面板背景色，与 Profile 页面保持一致 */
     --theme-panel-bg: rgba(245, 248, 252, 0.5);
 }
 
@@ -18,7 +11,6 @@
     border-radius: 16px;
     padding: 30px;
     color: var(--text-primary);
-    /* 新增：与 Profile 页面一致的阴影，创造深度和悬浮感 */
     box-shadow: 0 8px 32px rgba(44, 62, 80, 0.15);
 }
 

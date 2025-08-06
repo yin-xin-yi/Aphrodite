@@ -17,6 +17,7 @@ import com.example.data.dto.UserInfoDTO;
 import com.example.data.entity.Post;
 import com.example.data.entity.User;
 import com.example.data.exception.ResourceNotFind;
+import com.example.data.repository.PostLikeRepository;
 import com.example.data.repository.PostRepository;
 
 import jakarta.transaction.Transactional;
@@ -32,15 +33,18 @@ public class PostService {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private PostLikeRepository postLikeRepository;
+
     /**
      * 获取所有帖子，用于首页信息流
      *
      * 知识预备 1. .collect() - 收集的动作 2. Collectors 这个是打包的说明书 toList 就是具体打包方式
      */
-    public List<PostResponseDTO> getAllPosts() {
+    public List<PostResponseDTO> getAllPosts(Long currentUserId) {
         List<Post> postsWithUsers = postRepository.findAllWithUserOrderByCreatedAtDesc();
         return postsWithUsers.stream()
-                .map(post -> convertToDTO(post, false)) // 调用下面的新方法
+                .map(post -> convertToDTO(post, false, currentUserId)) // 调用下面的新方法
                 .collect(Collectors.toList());
     }
 
@@ -66,21 +70,21 @@ public class PostService {
         post.setUser(user);
         Post savepost = postRepository.save(post);
 
-        return buildResponse(savepost.getId(), false);
+        return buildResponse(savepost.getId(), false, post_out.getUserId());
     }
 
-    public PostResponseDTO buildResponse(Long postId, Boolean isdetail) {
+    public PostResponseDTO buildResponse(Long postId, Boolean isdetail, Long currentUserId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFind("这个postid 不存在"));
 
         // 这个进行安全性 检查
-        return convertToDTO(post, Boolean.TRUE.equals(isdetail));
+        return convertToDTO(post, Boolean.TRUE.equals(isdetail), currentUserId);
     }
 
     /**
      *
      */
-    private PostResponseDTO convertToDTO(Post post, boolean isdetail) {
+    private PostResponseDTO convertToDTO(Post post, boolean isdetail, Long currentUserId) {
         PostResponseDTO postResponseDTO = new PostResponseDTO();
 
         postResponseDTO.setAnonymous(post.isAnonymous());
@@ -127,6 +131,13 @@ public class PostService {
         postResponseDTO.setPost(pid);
         postResponseDTO.setTime(time);
         postResponseDTO.setAnonymous(post.isAnonymous());
+
+        if (currentUserId != null) {
+            boolean isLiked = postLikeRepository.existsByUser_IdAndPost_Id(currentUserId, post.getId());
+            postResponseDTO.setLiked(isLiked);
+        } else {
+            postResponseDTO.setLiked(false);
+        }
 
         return postResponseDTO;
     }

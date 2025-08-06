@@ -18,8 +18,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-//  @Data Lombok 库 就是有很多 get set 等方式很方便
-//  @Entity 就是一个实体 
 @Getter
 @Setter
 @NoArgsConstructor

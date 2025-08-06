@@ -1,5 +1,7 @@
 package com.example.data.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 
 @Data
@@ -11,15 +13,14 @@ public class PostResponseDTO {
      *
      */
     private boolean isAnonymous;
-
     private int code;
 
+    @JsonProperty("isLiked")
+    private boolean isLiked;
+
     private UserInfoDTO user;
-
     private PostInfoDTO post;
-
     private TimeInfoDTO time;
-
     private CountInfoDTO count;
 
 }

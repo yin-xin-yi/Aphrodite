@@ -1,5 +1,7 @@
 package com.example.data.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,5 +12,6 @@ import lombok.NoArgsConstructor;
 public class LikeResponseDTO {
 
     private int likeCount;
-    private boolean liked;
+    @JsonProperty("isLiked")
+    private boolean isLiked;
 }

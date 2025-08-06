@@ -10,7 +10,7 @@ spring:
             - id: ams-auth
               uri: http://localhost:8081 
               predicates:
-                - Path=/api/auth/** 
+                - Path=/api/auth/**
               
             - id: ams-data
               uri: http://localhost:8083 

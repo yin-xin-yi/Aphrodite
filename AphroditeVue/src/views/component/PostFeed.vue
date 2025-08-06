@@ -3,15 +3,29 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { FetchAllPosts } from "@/api/post.js";
 import { TimeFormat } from "@/utils/timeformat.js";
-import {MapPostToCardData} from '@/utils/map'
+import { MapPostToCardData } from "@/utils/map";
+import { ClickLike } from "@/api/cnt";
 
 const router = useRouter();
 const posts = ref([]);
 const isloading = ref(true);
 
-
 const GoToPostDetail = (postId) => {
   console.log(`准备跳转到帖子详情页,ID: ${postId}`);
+};
+
+
+const HandleLikeClick = async (postItem, event) => {
+  event.stopPropagation();
+  console.log("Handling like click for post:", postItem.post.id);
+  try {
+    const response = await ClickLike(postItem.post.id);
+    postItem.count.likes = response.likeCount;
+    postItem.count.isLiked = response.isLiked;
+    console.log(`Post ${postItem.post.id} like status updated. Likes: ${postItem.count.likes}, Liked: ${postItem.count.isLiked}`);
+  } catch (error) {
+    console.error("点赞更新失败:", error);
+  }
 };
 
 onMounted(async () => {
@@ -28,7 +42,8 @@ onMounted(async () => {
       console.error("获取帖子失败: API返回的数据格式不正确", postsArray);
     }
   } catch (error) {
-    console.error("获取帖子失败:", error.response.data);
+    console.error("获取帖子失败:", error.response.message);
+    console.error("获取帖子失败:", error);
   } finally {
     isloading.value = false;
   }
@@ -67,7 +82,16 @@ onMounted(async () => {
       </div>
 
       <div class="post-footer">
-        <button class="action-btn">❤️ {{ post.count.likes }}</button>
+        <button
+          class="action-btn"
+          :class="{ 'liked-btn': post.count.isLiked }"
+          @click="HandleLikeClick(post, $event)"
+        >
+          <span v-if="post.count.isLiked">❤️</span>
+          <span v-else>🤍</span>
+          {{ post.count.likes }}
+        </button>
+
         <button class="action-btn">💬 {{ post.count.comments }}</button>
         <button class="action-btn">👀 {{ post.count.views }}</button>
         <button class="action-btn">🔗 分享</button>
