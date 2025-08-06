@@ -176,3 +176,75 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(118, 159, 205, 0.4);
 }
+
+
+
+
+
+.open-posts-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--glass-border); 
+}
+
+.section-title {
+  font-weight: bold;
+  color: var(--text-secondary); /* 使用您的颜色变量 */
+  margin-bottom: 15px;
+  padding: 0 20px; /* 与导航项的左右内边距保持一致 */
+  font-size: 0.95em;
+}
+
+.post-tab-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px; 
+  background-color: transparent; 
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2); 
+  font-size: 0.9em;
+  transition: all 0.3s;
+  cursor: pointer;
+  margin-bottom: 5px;
+  border-radius: 8px;
+}
+
+.post-tab-item:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.post-tab-item .tab-link {
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; 
+  color: var(--text-primary);
+  text-decoration: none;
+  padding-right: 10px;
+}
+
+.post-tab-item .tab-link:hover {
+  color: var(--blue-primary); 
+}
+
+.post-tab-item .tab-link.active-tab-link {
+  color: var(--blue-primary);
+  font-weight: bold;
+  background-color: var(--active-bg);
+  border-radius: 8px; 
+  padding: 10px 20px;
+  margin: -10px -20px; 
+}
+
+.post-tab-item .close-tab-icon {
+  margin-left: auto;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 0.75em;
+  padding: 3px;
+  transition: color 0.2s;
+}
+
+.post-tab-item .close-tab-icon:hover {
+  color: #f5222d; 
+}

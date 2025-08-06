@@ -27,6 +27,12 @@ const routes = [
         path: 'UserProfile', 
         name: 'UserProfile',
         component: () => import('@/views/component/UserProfile.vue')
+      },
+      {
+        path: 'posts/:id', 
+        name: 'PostDetail',
+        component: () => import('@/views/component/PostDetail.vue'), 
+        props: true // 允许将路由参数 :id 作为 props 传递给 PostDetail 组件
       }
     ]
   },
