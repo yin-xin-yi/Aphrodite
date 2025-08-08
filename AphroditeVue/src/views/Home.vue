@@ -14,7 +14,7 @@ const piana = PostStore();
 
 const user = reactive({
   name: GetUserName() || "游客",
-  avatar: `https://api.multiavatar.com/${GetUserName() || "Yxy"}.svg`,
+  avatar: `https://api.multiavatar.com/${GetUserName()}.svg`,
 });
 
 // 开始标题
@@ -64,9 +64,6 @@ const handleCloseTab = (postId) => {
   }
 };
 
-
-
-// 登出
 const HandleLogout = () => {
   RemoveAuthInfo();
   router.push("/RegisterAndLogin");
@@ -97,9 +94,10 @@ const HandleLogout = () => {
             </li>
           </RouterLink>
 
-          <div v-if="postTabsStore.openPosts.length > 0" class="open-posts-section">
+          <div v-if="piana.openPosts.length > 0" class="open-posts-section">
+
             <div class="section-title">已打开帖子</div>
-            <div v-for="post in postTabsStore.openPosts" :key="post.id" class="post-tab-item">
+            <div v-for="post in piana.openPosts" :key="post.id" class="post-tab-item">
               <router-link :to="`/Home/posts/${post.id}`" class="tab-link" active-class="active-tab-link">
                 {{ post.title }}
               </router-link>

@@ -16,7 +16,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findAllByOrderByCreatedAtDesc();
 
-    @Query("SELECT p FROM Post p JOIN FETCH p.user ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM Post p ORDER BY p.createdAt DESC")
     List<Post> findAllWithUserOrderByCreatedAtDesc();
 
     List<Post> findByUserId(Long userId);

@@ -2,12 +2,15 @@ import service from "@/utils/service";
 import { GetUserId } from "../utils/auth";
 
 export const FetchAllPosts = async () => {
-  console.log("FetchAllPosts",GetUserId());
-  const userId = GetUserId();
-  return await service.get(`/data/fetchdata_onmounted/${userId}`);
+  const userid = GetUserId();
+  return await service.get(`/data/fetchdata_onmounted/${userid}`);
 };
-export const FetchPostDetail = async (postid) => {
-  return await service.get(`/data/fetchpost/${postid}`);
+export const FetchPostDetail = async (postId) => {
+  return await service.get(`/data/fetchpost/${postId}`, {
+    params: {
+      userId: GetUserId() || null,
+    },
+  });
 };
 export const CreatePost = async (post_inf) => {
   return await service.post("/data/addpost", post_inf);

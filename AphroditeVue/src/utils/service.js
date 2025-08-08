@@ -35,23 +35,22 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
   (response) => {
+    console.log("response:",response);
     const res = response.data;
-    if (res.data) {
-      if (res.data.token) {
-        SetToken(res.data.token);
-        console.log("Token 已自动存储!");
-      }
-      if (res.data.userid) {
-        SetUserId(res.data.userid);
-        console.log("userid 已自动存储!");
-      }
-      if (res.data.username) {
-        SetUserName(res.data.username);
-        console.log("username 已自动存储!");
-      }
-    }
-
-    return res; // 注意这里直接是data
+    console.log("res:",res);
+    // if (res && res.data && res.data.token) {
+    //   SetToken(res.data.token);
+    //   console.log("Token 已自动存储!");
+    // }
+    // if (res && res.data && res.data.userid) {
+    //   SetUserId(res.data.userid);
+    //   console.log("userid 已自动存储!");
+    // }
+    // if (res && res.data && res.data.username) {
+    //   SetUserName(res.data.username);
+    //   console.log("username 已自动存储!");
+    // }
+    return res;
   },
   (error) => {
     return Promise.reject(error);

@@ -47,6 +47,11 @@ public class Post {
     private User user;
 
     private String title;
+
+    /**
+     * 告诉 JPA：这个字段是大文本或大二进制数据，数据库中应使用 TEXT 或 BYTEA/BLOB 等类型存储
+     */
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @Column(name = "view_count")
@@ -71,7 +76,7 @@ public class Post {
      * updatable = false 它告诉 JPA：“这个列的值在插入后就不能再被更新了”
      */
     @Column(name = "created_at", updatable = false, nullable = false)
-    @CreationTimestamp // 让Hibernate在插入时自动填充创建时间
+    @CreationTimestamp
     private OffsetDateTime createdAt;
 
     /**

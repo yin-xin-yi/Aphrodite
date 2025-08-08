@@ -11,13 +11,15 @@ const posts = ref([]);
 const isloading = ref(true);
 
 const GoToPostDetail = (postId) => {
-  console.log(`准备跳转到帖子详情页,ID: ${postId}`);
+  router.push({ 
+    name: 'PostDetail', 
+    params: { id: postId } 
+  });
 };
-
 
 const HandleLikeClick = async (postItem, event) => {
   event.stopPropagation();
-  console.log("Handling like click for post:", postItem.post.id);
+  // console.log("Handling like click for post:", postItem.post.id);
   try {
     const response = await ClickLike(postItem.post.id);
     postItem.count.likes = response.likeCount;
@@ -29,8 +31,10 @@ const HandleLikeClick = async (postItem, event) => {
 };
 
 onMounted(async () => {
+  console.log("onMounted");
   try {
     const postsArray = await FetchAllPosts();
+    console.log("postsArray",postsArray);
     if (Array.isArray(postsArray)) {
       if (postsArray.length > 0) {
         posts.value = postsArray.map(MapPostToCardData);
@@ -42,7 +46,6 @@ onMounted(async () => {
       console.error("获取帖子失败: API返回的数据格式不正确", postsArray);
     }
   } catch (error) {
-    console.error("获取帖子失败:", error.response.message);
     console.error("获取帖子失败:", error);
   } finally {
     isloading.value = false;

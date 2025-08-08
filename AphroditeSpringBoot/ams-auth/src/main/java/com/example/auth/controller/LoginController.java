@@ -77,18 +77,18 @@ public class LoginController {
         if (userOptional.isPresent()) {
 
             /// 这里是测试 记得删除 TODO: 删除
-            if ("testuser".equals(loginRequest.getUsername())) {
-                String token = tokenservice.generateToken("testuser");
-                Data loginResponse = new Data(token, "testuser", 1L);
-                return LoginResponse.success("登录成功!", loginResponse);
-            }
+            // if ("testuser".equals(loginRequest.getUsername())) {
+            //     String token = tokenservice.generateToken("testuser");
+            //     Data loginResponse = new Data(token, "testuser", 1L);
+            //     return LoginResponse.success("登录成功!", loginResponse);
+            // }
 
             Users user = userOptional.get();
             if (passwordService.checkPassword(loginRequest.getPassword(), user.getPasswordHash())) {
                 String token = tokenservice.generateToken(user.getUsername());
                 String username = user.getUsername();
                 Long userid = user.getId();
-                Data loginResponse = new Data(token, username, userid);
+                Data loginResponse = new Data(token, username, userid, 200);
                 return LoginResponse.success("登录成功!", loginResponse);
             } else {
                 return LoginResponse.error(401, "用户名或密码错误");

@@ -1,40 +1,93 @@
-<!-- src/views/component/PostDetail.vue -->
+
+<script setup>
+import { ref, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
+import { UsePostTabsStore } from '@/stores/posttabsstore.js';
+import { ClickLike } from '@/api/cnt';
+import { FetchPostDetail} from '@/api/post'
+import { MapPostToCardData } from '@/utils/map'; 
+
+
+const route = useRoute();
+const post = ref(null); 
+const loading = ref(true);
+const postTabsStore = UsePostTabsStore();
+
+const postId = ref(route.params.id);
+
+const FetchPost = async (id) => {
+  loading.value = true;
+  post.value = null;
+  try {
+    const response = await FetchPostDetail(id);
+    const rawpostdata = response; 
+    post.value = MapPostToCardData(rawpostdata);
+    postTabsStore.AddPostTab({
+      id: post.value.post.id,
+      title: post.value.post.title
+    });
+
+  } catch (error) {
+    console.error('获取帖子详情失败:', error);
+    post.value = null;
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(() => {
+  FetchPost(postId.value);
+});
+
+watch(() => route.params.id, (newId) => {
+  if (newId && newId !== postId.value) {
+    postId.value = newId;
+    FetchPost(newId);
+  }
+});
+
+const handleLike = async () => {
+  if (!post.value) return;
+  try {
+    const response = await ClickLike(post.value.post.id);
+    post.value.count.likes = response.likeCount;
+    post.value.count.isLiked = response.liked;
+  } catch (error) {
+    console.error('点赞失败:', error);
+  }
+};
+</script>
+
+
+
 <template>
   <div class="post-detail-container">
     <div v-if="post" class="post-content-wrapper">
-      <!-- 帖子头部：作者信息和时间 -->
       <div class="post-header">
-        <img :src="post.authorAvatar" alt="作者头像" class="author-avatar" />
+        <img :src="post.author.avatar" alt="作者头像" class="author-avatar" />
         <div class="author-info">
-          <span class="author-name">{{ post.authorName }}</span>
-          <span class="post-time">{{ formatTime(post.createdAt) }}</span>
+          <span class="author-name">{{ post.author.username }}</span>
+          <span class="post-time">{{ post.time.create_at }}</span>
         </div>
       </div>
 
-      <!-- 帖子标题 -->
-      <h1 class="post-title">{{ post.title }}</h1>
-
-      <!-- 帖子正文内容 -->
-      <div class="post-content" v-html="post.content"></div>
-
-      <!-- 帖子互动操作区 -->
+      <h1 class="post-title">{{ post.post.title }}</h1>
+      <div class="post-content" v-html="post.post.content"></div>
+      
       <div class="post-actions">
-        <button @click="handleLike" :class="{ 'liked-btn': post.isLiked }">
-          <i class="fas fa-heart"></i> {{ post.likeCount }}
+        <button @click="handleLike" :class="{ 'liked-btn': post.count.isLiked }">
+          <i class="fas fa-heart"></i> {{ post.count.likes }}
         </button>
         <button>
-          <i class="fas fa-comment"></i> {{ post.commentCount }}
+          <i class="fas fa-comment"></i> {{ post.count.comments }}
         </button>
         <button>
-          <i class="fas fa-bookmark"></i> {{ post.bookmarkCount }}
+          <!-- <i class="fas fa-bookmark"></i> {{ post.count.bookmarks }} -->
         </button>
         <button>
           <i class="fas fa-share-alt"></i> 分享
         </button>
       </div>
-
-      <!-- 评论区已移除 -->
-
     </div>
     <div v-else class="loading-state">
       <p v-if="loading">帖子加载中...</p>
@@ -43,65 +96,6 @@
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { usePostTabsStore } from '@/stores/postTabsStore'; 
-import { getPostDetail, ClickLike } from '@/api/post'; 
-
-// 评论区组件已移除，所以不再需要导入 CommentSection
-// import CommentSection from '@/components/CommentSection.vue'; // <-- 这行已移除
-
-const route = useRoute();
-const post = ref(null);
-const loading = ref(true); 
-const postTabsStore = usePostTabsStore();
-
-const postId = ref(route.params.id);
-
-const fetchPost = async (id) => {
-  loading.value = true;
-  post.value = null; 
-  try {
-    const response = await getPostDetail(id); // 调用后端 API 获取帖子详情
-    post.value = response.data;
-    // 将当前帖子添加到全局的 openPosts 列表中
-    postTabsStore.addPostTab({ id: post.value.id, title: post.value.title });
-  } catch (error) {
-    console.error('获取帖子详情失败:', error);
-    post.value = null; 
-  } finally {
-    loading.value = false; 
-  }
-};
-
-onMounted(() => {
-  fetchPost(postId.value);
-});
-
-watch(() => route.params.id, (newId) => {
-  if (newId && newId !== postId.value) {
-    postId.value = newId; 
-    fetchPost(newId);
-  }
-});
-
-const handleLike = async () => {
-  if (!post.value) return;
-  try {
-    const response = await ClickLike(post.value.id);
-    post.value.likeCount = response.likeCount;
-    post.value.isLiked = response.liked;
-  } catch (error) {
-    console.error('点赞失败:', error);
-  }
-};
-
-const formatTime = (isoString) => {
-    const date = new Date(isoString);
-    return date.toLocaleString();
-};
-</script>
 
 <style scoped>
 .post-detail-container {
@@ -110,7 +104,7 @@ const formatTime = (isoString) => {
   border-radius: 8px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
-  min-height: 500px; 
+  min-height: 500px;
   display: flex;
   flex-direction: column;
 }
@@ -162,16 +156,20 @@ const formatTime = (isoString) => {
   color: #222;
   margin-bottom: 30px;
   line-height: 1.3;
-  word-break: break-word; /* 确保长标题能换行 */
+  word-break: break-word;
+  /* 确保长标题能换行 */
 }
 
 .post-content {
   font-size: 1.15em;
   line-height: 1.8;
   color: #444;
-  margin-bottom: 40px; /* 调整底部间距，因为评论区没了 */
-  white-space: pre-wrap; /* 保留文本中的换行和空格 */
-  word-wrap: break-word; /* 自动换行 */
+  margin-bottom: 40px;
+  /* 调整底部间距，因为评论区没了 */
+  white-space: pre-wrap;
+  /* 保留文本中的换行和空格 */
+  word-wrap: break-word;
+  /* 自动换行 */
 }
 
 /* 针对 v-html 渲染的图片和表格等内容进行基本样式重置 */
@@ -182,18 +180,25 @@ const formatTime = (isoString) => {
   margin: 15px 0;
   border-radius: 4px;
 }
+
 .post-content :deep(p) {
   margin-bottom: 1em;
 }
-.post-content :deep(h1), .post-content :deep(h2), .post-content :deep(h3) {
+
+.post-content :deep(h1),
+.post-content :deep(h2),
+.post-content :deep(h3) {
   margin-top: 1.5em;
   margin-bottom: 0.8em;
   color: #333;
 }
-.post-content :deep(ul), .post-content :deep(ol) {
+
+.post-content :deep(ul),
+.post-content :deep(ol) {
   margin-left: 20px;
   margin-bottom: 1em;
 }
+
 .post-content :deep(blockquote) {
   border-left: 4px solid #ccc;
   padding-left: 10px;
@@ -207,7 +212,7 @@ const formatTime = (isoString) => {
   padding: 20px 0;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
-  margin-bottom: 30px; 
+  margin-bottom: 30px;
 }
 
 .post-actions button {
@@ -228,6 +233,7 @@ const formatTime = (isoString) => {
 }
 
 .post-actions .liked-btn {
-  color: #ff4d4f; /* 点赞后的醒目红色 */
+  color: #ff4d4f;
+  /* 点赞后的醒目红色 */
 }
 </style>

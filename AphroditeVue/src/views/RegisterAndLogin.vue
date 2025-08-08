@@ -2,6 +2,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { HandleLogin, HandleRegister } from '@/api/rl';
+import { SetToken,SetUserId,SetUserName } from '../utils/auth';
 
 const router = useRouter();
 const islogin = ref(true);
@@ -22,9 +23,13 @@ const SubmitLogin = async () => {
     }
     try {
         const response = await HandleLogin(LoginForm);
+        console.log("response:",response);
         if (response.code == 200)
         {
             alert(response.message || '登录成功！');
+            SetUserId(response.data.userid);
+            SetUserName(response.data.username);
+            SetToken(response.data.token);
             router.push({ name: 'Home' });
         }
         else if(response.code == 401){
@@ -43,18 +48,20 @@ const SubmitRegister = async () => {
     }
     try {
         const response = await HandleRegister(RegisterForm);
+        console.log(response);
         if (response && response.success) {
             alert(response.message || '注册成功！现在可以登录了。');
-            // 注册成功后，清空表单并切换到登录页
             router.push({ name: "Home" })
+            SetUserId(response.userid);
+            SetUserName(response.userName);
+            SetToken(response.token);
 
-            Object.assign(RegisterForm, { username: '', email: '', password: '' });
         } else {
             alert(response.message || '注册失败，请稍后再试！');
         }
     } catch (error) {
         console.error('注册请求失败:', error);
-        alert('服务器开小差了，请稍后再试！');
+        alert(error.response.data.message);
     }
 };
 
