@@ -23,7 +23,7 @@ import com.example.data.service.PostSelfService;
  */
 @RestController
 @RequestMapping("api/data/selfpost")
-public class FetchSelfPosts {
+public class GetSelfPostsController {
 
     @Autowired
     private PostSelfService postService;

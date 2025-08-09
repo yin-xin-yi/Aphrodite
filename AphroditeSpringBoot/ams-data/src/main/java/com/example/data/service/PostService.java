@@ -37,9 +37,10 @@ public class PostService {
     @Autowired
     private UserRepository userRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public PostResponseDTO getPostDetail(Long postId, Long currentUserId) {
         logger.info("Fetching detail for post ID: {} for user ID: {}", postId, currentUserId);
+        postRepository.incrementViewCount(postId);
         return buildResponse(postId, true, currentUserId);
     }
 
